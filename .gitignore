@@ -37,6 +37,7 @@ desktop.ini
 /data/
 /exports/
 /dumps/
+/.cache/
 
 # === Supabase local ===
 .supabase/
