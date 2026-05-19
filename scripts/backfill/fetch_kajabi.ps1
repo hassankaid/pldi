@@ -50,8 +50,21 @@ Write-Host "[2/3] Paginating /v1/$Entity ..."
 $all = @()
 $page = 1
 $startedAt = Get-Date
+
+# /v1/transactions requires a filter[site_id]= parameter
+$filterParam = ''
+if ($Entity -eq 'transactions') {
+  $siteId = $env:KAJABI_SITE_ID
+  if (-not $siteId) {
+    Write-Error "Set KAJABI_SITE_ID env var (required for /v1/transactions endpoint)."
+    exit 1
+  }
+  $filterParam = "&filter%5Bsite_id%5D=$siteId"
+  Write-Host "      Using site_id filter: $siteId"
+}
+
 do {
-  $url = "https://api.kajabi.com/v1/$Entity" + "?page%5Bnumber%5D=$page&page%5Bsize%5D=$PageSize"
+  $url = "https://api.kajabi.com/v1/$Entity" + "?page%5Bnumber%5D=$page&page%5Bsize%5D=$PageSize" + $filterParam
   $resp = Invoke-RestMethod -Uri $url -Headers $headers -Method Get
   $batch = @($resp.data)
   $all += $batch
