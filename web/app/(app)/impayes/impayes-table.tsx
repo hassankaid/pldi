@@ -6,10 +6,16 @@ import { DataTable } from "@/components/data-table";
 import { StateBadge } from "@/components/state-badge";
 import { formatDate, formatEur } from "@/lib/format";
 import type { ImpayeRow } from "@/lib/data/types";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const STATUS_FILTER = ["all", "in_retry", "late", "missed"] as const;
+
+const STATUS_LABELS: Record<string, string> = {
+  all: "Tous",
+  in_retry: "Retry",
+  late: "En retard",
+  missed: "Manqué",
+};
 
 export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -28,9 +34,11 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorFn: (row) =>
           `${row.customer_name ?? ""} ${row.customer_email ?? ""}`,
         cell: ({ row }) => (
-          <div>
-            <div className="font-medium">{row.original.customer_name ?? "—"}</div>
-            <div className="text-xs text-muted-foreground">
+          <div className="min-w-0">
+            <div className="font-medium text-zinc-900 truncate">
+              {row.original.customer_name?.trim() || "—"}
+            </div>
+            <div className="text-[11px] text-zinc-500 truncate">
               {row.original.customer_email}
             </div>
           </div>
@@ -40,7 +48,7 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorKey: "offer_label_snapshot",
         header: "Offre",
         cell: ({ row }) => (
-          <div className="max-w-xs truncate text-sm">
+          <div className="max-w-xs truncate text-zinc-700 text-[12px]">
             {row.original.offer_label_snapshot ?? "—"}
           </div>
         ),
@@ -49,8 +57,11 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         id: "installment",
         header: "Échéance",
         cell: ({ row }) => (
-          <span className="text-xs tabular-nums">
-            {row.original.installment_n}/{row.original.plan_total_installments}
+          <span className="text-zinc-700 tabular-nums text-[12px]">
+            <span className="font-medium">{row.original.installment_n}</span>
+            <span className="text-zinc-400">
+              /{row.original.plan_total_installments}
+            </span>
           </span>
         ),
       },
@@ -58,21 +69,25 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorKey: "expected_at",
         header: "Date prévue",
         cell: ({ row }) => (
-          <span className="text-xs tabular-nums whitespace-nowrap">
+          <span className="text-zinc-700 tabular-nums whitespace-nowrap text-[12px]">
             {formatDate(row.original.expected_at)}
           </span>
         ),
       },
       {
         accessorKey: "days_overdue",
-        header: () => <span className="text-right">Retard</span>,
+        header: "Retard",
         cell: ({ row }) => {
           const d = row.original.days_overdue;
           return (
             <span
               className={cn(
-                "tabular-nums font-medium text-sm",
-                d > 60 ? "text-red-600" : d > 21 ? "text-orange-600" : "text-amber-600",
+                "tabular-nums font-medium text-[12px]",
+                d > 60
+                  ? "text-red-600"
+                  : d > 21
+                    ? "text-orange-600"
+                    : "text-amber-600",
               )}
             >
               {d}j
@@ -82,9 +97,9 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
       },
       {
         accessorKey: "expected_eur",
-        header: () => <span className="text-right">Montant</span>,
+        header: "Montant",
         cell: ({ row }) => (
-          <span className="tabular-nums font-medium whitespace-nowrap">
+          <span className="tabular-nums font-medium text-zinc-900 whitespace-nowrap">
             {formatEur(Number(row.original.expected_eur))}
           </span>
         ),
@@ -93,15 +108,6 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorKey: "status",
         header: "Statut",
         cell: ({ row }) => <StateBadge state={row.original.status} />,
-      },
-      {
-        accessorKey: "confidence_source",
-        header: "Source",
-        cell: ({ row }) => (
-          <span className="text-xs text-muted-foreground">
-            {row.original.confidence_source}
-          </span>
-        ),
       },
     ],
     [],
@@ -115,24 +121,21 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
       searchPlaceholder="Rechercher par client, email, offre…"
       rowHref={(i) => `/sales/${i.sale_id}`}
       filters={
-        <div className="flex items-center gap-1.5 text-xs">
-          <span className="text-muted-foreground">Statut :</span>
+        <div className="inline-flex items-center rounded-md border border-zinc-200 bg-white p-0.5">
           {STATUS_FILTER.map((s) => (
-            <Button
+            <button
               key={s}
-              variant={statusFilter === s ? "default" : "outline"}
-              size="sm"
-              className="h-7 text-xs px-2.5"
+              type="button"
               onClick={() => setStatusFilter(s)}
+              className={cn(
+                "h-6 px-2 text-[11px] font-medium rounded transition-colors",
+                statusFilter === s
+                  ? "bg-zinc-900 text-white"
+                  : "text-zinc-600 hover:text-zinc-900",
+              )}
             >
-              {s === "all"
-                ? "Tous"
-                : s === "in_retry"
-                  ? "Retry"
-                  : s === "late"
-                    ? "En retard"
-                    : "Manqué"}
-            </Button>
+              {STATUS_LABELS[s]}
+            </button>
           ))}
         </div>
       }

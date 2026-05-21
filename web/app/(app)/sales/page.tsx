@@ -1,5 +1,7 @@
+import { PageHeader } from "@/components/page-header";
 import { getAllSales } from "@/lib/data/sales";
 import { SalesTable } from "./sales-table";
+import { formatInteger } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -8,12 +10,10 @@ export default async function SalesPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">Ventes</h1>
-        <p className="text-sm text-muted-foreground">
-          {sales.length} ventes au total · Cliquez une ligne pour voir le détail
-        </p>
-      </header>
+      <PageHeader
+        title="Ventes"
+        subtitle={`${formatInteger(sales.length)} ventes au total · cliquez une ligne pour le détail`}
+      />
       <SalesTable data={sales} />
     </div>
   );

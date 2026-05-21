@@ -1,23 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { PageHeader } from "@/components/page-header";
 import { StateBadge, PaymentTypeBadge } from "@/components/state-badge";
 import {
   getSaleById,
@@ -27,7 +10,6 @@ import {
 import {
   formatDate,
   formatDateLong,
-  formatEur,
   formatEurCents,
 } from "@/lib/format";
 
@@ -52,55 +34,58 @@ export default async function SaleDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Link
-          href="/sales"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Retour aux ventes
-        </Link>
-      </div>
-
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
+      <PageHeader
+        breadcrumbs={[
+          { label: "Ventes", href: "/sales" },
+          { label: sale.sale_id.slice(0, 12) + "…" },
+        ]}
+        title={
+          <span className="flex items-center gap-2">
+            {sale.offer_label_snapshot ??
+              sale.offer_title_public_snapshot ??
+              "Vente"}
+          </span>
+        }
+        subtitle={
+          <span className="flex items-center gap-3 flex-wrap">
             <PaymentTypeBadge type={sale.payment_type} />
             <StateBadge state={sale.state_business} />
-          </div>
-          <h1 className="text-xl font-bold tracking-tight">
-            {sale.offer_label_snapshot ?? sale.offer_title_public_snapshot ?? "Vente"}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sale&nbsp;ID : <span className="font-mono">{sale.sale_id}</span> ·
-            Client :{" "}
+            <span className="font-mono text-[11px] text-zinc-400">
+              {sale.sale_id}
+            </span>
+            <span>·</span>
             <Link
               href={`/customers/${sale.customer_id}`}
-              className="font-mono hover:underline"
+              className="font-mono text-[11px] hover:text-zinc-900"
             >
-              {sale.customer_id}
+              client {sale.customer_id}
             </Link>
-          </p>
-        </div>
-        <div className="text-right">
-          <div className="text-xs text-muted-foreground">Encaissé net</div>
-          <div className="text-2xl font-bold tabular-nums">
-            {formatEurCents(sale.net_collected_cents)}
-          </div>
-          {sale.refund_cents != null && sale.refund_cents > 0 && (
-            <div className="text-xs text-amber-600">
-              dont {formatEurCents(sale.refund_cents)} de refunds
+          </span>
+        }
+        actions={
+          <div className="text-right">
+            <div className="text-[11px] text-zinc-500 uppercase tracking-wider">
+              Encaissé net
             </div>
-          )}
-        </div>
-      </header>
+            <div className="text-[24px] font-semibold tabular-nums tracking-tight text-zinc-900 leading-none mt-1">
+              {formatEurCents(sale.net_collected_cents)}
+            </div>
+            {sale.refund_cents != null && sale.refund_cents > 0 && (
+              <div className="text-[11px] text-violet-600 mt-1">
+                dont {formatEurCents(sale.refund_cents)} refunds
+              </div>
+            )}
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Détails de la vente</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm space-y-2">
+        {/* Sale info */}
+        <section className="rounded-xl border border-zinc-200 bg-white p-5">
+          <h2 className="text-[13px] font-semibold text-zinc-900 mb-4">
+            Détails
+          </h2>
+          <dl className="space-y-2.5 text-[13px]">
             <Row label="Vendue le" value={formatDateLong(sale.sold_at)} />
             <Row
               label="Début effectif"
@@ -109,14 +94,16 @@ export default async function SaleDetailPage({
             <Row
               label="Par échéance"
               value={
-                <span>
+                <span className="inline-flex items-center gap-1.5">
                   {formatEurCents(sale.amount_per_installment_cents)}
-                  {sale.amount_source && (
-                    <Badge variant="outline" className="ml-2 text-[10px]">
-                      {sale.amount_source === "observed"
-                        ? "via paiements"
-                        : "via purchase"}
-                    </Badge>
+                  {sale.amount_source === "observed" ? (
+                    <span className="text-[10px] text-emerald-600 px-1.5 py-0.5 bg-emerald-50 rounded">
+                      ✓ observé
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-amber-600 px-1.5 py-0.5 bg-amber-50 rounded">
+                      ⚠ purchase
+                    </span>
                   )}
                 </span>
               }
@@ -134,185 +121,219 @@ export default async function SaleDetailPage({
               )}
             <Row label="Devise" value={sale.currency ?? "—"} />
             {sale.coupon_code && (
-              <Row label="Coupon" value={<code>{sale.coupon_code}</code>} />
+              <Row label="Coupon" value={<code className="text-xs">{sale.coupon_code}</code>} />
             )}
-            <Separator className="my-2" />
+          </dl>
+
+          <div className="mt-4 pt-4 border-t border-zinc-100 space-y-2.5 text-[13px]">
             <Row
-              label="Échéances payées (Kajabi)"
+              label="Échéances Kajabi"
               value={sale.installments_made_kajabi}
             />
             <Row label="Charges réussies" value={sale.payments_succeeded} />
             <Row
               label="Charges échouées"
               value={
-                sale.payments_failed > 0 ? (
-                  <span className="text-red-600">{sale.payments_failed}</span>
-                ) : (
-                  0
-                )
+                <span
+                  className={sale.payments_failed > 0 ? "text-red-600" : ""}
+                >
+                  {sale.payments_failed}
+                </span>
               }
             />
             <Row label="Refunds" value={sale.refunds_count} />
-            {sale.deactivated_at && (
-              <>
-                <Separator className="my-2" />
-                <Row
-                  label="Désactivé le"
-                  value={
-                    <span className="text-amber-600">
-                      {formatDateLong(sale.deactivated_at)}
-                    </span>
-                  }
-                />
-                <Row
-                  label="Motif"
-                  value={sale.deactivation_reason ?? "—"}
-                />
-              </>
-            )}
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-base">
-              Historique des paiements ({payments.length})
-            </CardTitle>
-            <CardDescription>
+          {sale.deactivated_at && (
+            <div className="mt-4 pt-4 border-t border-zinc-100 space-y-2.5 text-[13px]">
+              <Row
+                label="Désactivé"
+                value={
+                  <span className="text-amber-600">
+                    {formatDateLong(sale.deactivated_at)}
+                  </span>
+                }
+              />
+              <Row label="Motif" value={sale.deactivation_reason ?? "—"} />
+            </div>
+          )}
+        </section>
+
+        {/* Payments history */}
+        <section className="lg:col-span-2 rounded-xl border border-zinc-200 bg-white">
+          <div className="px-5 pt-5 pb-3">
+            <h2 className="text-[13px] font-semibold text-zinc-900">
+              Historique des paiements
+              <span className="text-zinc-400 font-normal ml-2">
+                ({payments.length})
+              </span>
+            </h2>
+            <p className="text-[12px] text-zinc-500 mt-0.5">
               Toutes les transactions Kajabi liées à cette vente
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {payments.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                Aucun paiement encore enregistré.
-              </p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12">#</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Action</TableHead>
-                    <TableHead>État</TableHead>
-                    <TableHead>Provider</TableHead>
-                    <TableHead className="text-right">Montant</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+            </p>
+          </div>
+
+          {payments.length === 0 ? (
+            <p className="px-5 pb-5 text-[13px] text-zinc-400">
+              Aucun paiement enregistré.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead className="border-y border-zinc-100">
+                  <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+                    <th className="px-5 py-2 text-left w-8">#</th>
+                    <th className="px-3 py-2 text-left">Date</th>
+                    <th className="px-3 py-2 text-left">Action</th>
+                    <th className="px-3 py-2 text-left">État</th>
+                    <th className="px-3 py-2 text-left">Provider</th>
+                    <th className="px-5 py-2 text-right">Montant</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
                   {payments.map((p) => (
-                    <TableRow key={p.payment_id}>
-                      <TableCell className="text-xs tabular-nums">
+                    <tr key={p.payment_id}>
+                      <td className="px-5 py-2 tabular-nums text-zinc-400 text-[12px]">
                         {p.installment_n ?? "—"}
-                      </TableCell>
-                      <TableCell className="text-xs tabular-nums whitespace-nowrap">
+                      </td>
+                      <td className="px-3 py-2 tabular-nums text-zinc-700 whitespace-nowrap text-[12px]">
                         {formatDate(p.occurred_at)}
-                      </TableCell>
-                      <TableCell className="text-xs">
+                      </td>
+                      <td className="px-3 py-2 text-zinc-600 text-[12px]">
                         {p.action === "refund" ? (
-                          <Badge variant="outline" className="text-purple-700 bg-purple-50">
+                          <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium bg-violet-50 text-violet-700">
                             Refund
-                          </Badge>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            {p.action}
                           </span>
+                        ) : (
+                          <span className="text-[11px]">{p.action}</span>
                         )}
-                      </TableCell>
-                      <TableCell className="text-xs">
+                      </td>
+                      <td className="px-3 py-2">
                         <StateBadge state={p.state} />
-                      </TableCell>
-                      <TableCell className="text-xs">{p.provider}</TableCell>
-                      <TableCell className="text-right tabular-nums font-medium">
+                      </td>
+                      <td className="px-3 py-2 text-zinc-600 text-[12px]">
+                        {p.provider}
+                      </td>
+                      <td className="px-5 py-2 text-right tabular-nums font-medium whitespace-nowrap">
                         <span
                           className={
                             p.is_refund
-                              ? "text-purple-700"
+                              ? "text-violet-700"
                               : p.is_failed
-                                ? "text-red-500"
-                                : ""
+                                ? "text-zinc-400 line-through"
+                                : "text-zinc-900"
                           }
                         >
                           {p.is_refund ? "−" : ""}
                           {formatEurCents(p.amount_cents)}
                         </span>
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                    </tr>
                   ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       </div>
 
+      {/* Schedule */}
       {schedule.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              Échéancier prévu ({schedule.length} échéances ·{" "}
-              {schedule[0].planned_source === "title"
-                ? "depuis le titre"
-                : schedule[0].planned_source === "ratio"
-                  ? "depuis le ratio offre"
-                  : "override manuel"}
-              )
-            </CardTitle>
-            <CardDescription>
-              Projection des échéances mensuelles vs paiements réels matchés
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">#</TableHead>
-                  <TableHead>Date prévue</TableHead>
-                  <TableHead className="text-right">Montant prévu</TableHead>
-                  <TableHead>Payée le</TableHead>
-                  <TableHead className="text-right">Retard</TableHead>
-                  <TableHead>Statut</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+        <section className="rounded-xl border border-zinc-200 bg-white">
+          <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+            <div>
+              <h2 className="text-[13px] font-semibold text-zinc-900">
+                Échéancier projeté
+                <span className="text-zinc-400 font-normal ml-2">
+                  ({schedule.length})
+                </span>
+              </h2>
+              <p className="text-[12px] text-zinc-500 mt-0.5">
+                Projection mensuelle vs paiements réels matchés
+              </p>
+            </div>
+            <span className="text-[11px] text-zinc-500">
+              Source :{" "}
+              <span className="font-medium text-zinc-700">
+                {schedule[0].planned_source === "title"
+                  ? "internal_title"
+                  : schedule[0].planned_source === "ratio"
+                    ? "ratio offre"
+                    : "override manuel"}
+              </span>
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-[13px]">
+              <thead className="border-y border-zinc-100">
+                <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+                  <th className="px-5 py-2 text-left w-8">#</th>
+                  <th className="px-3 py-2 text-left">Date prévue</th>
+                  <th className="px-3 py-2 text-right">Prévu</th>
+                  <th className="px-3 py-2 text-left">Payée le</th>
+                  <th className="px-3 py-2 text-right">Retard</th>
+                  <th className="px-5 py-2 text-left">Statut</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
                 {schedule.map((s) => (
-                  <TableRow key={s.installment_n}>
-                    <TableCell className="text-xs tabular-nums">
+                  <tr key={s.installment_n}>
+                    <td className="px-5 py-2 tabular-nums text-zinc-400 text-[12px]">
                       {s.installment_n}
-                    </TableCell>
-                    <TableCell className="text-xs tabular-nums whitespace-nowrap">
+                    </td>
+                    <td className="px-3 py-2 tabular-nums text-zinc-700 whitespace-nowrap text-[12px]">
                       {formatDate(s.expected_at)}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    </td>
+                    <td className="px-3 py-2 text-right tabular-nums text-zinc-700">
                       {formatEurCents(s.expected_amount_cents)}
-                    </TableCell>
-                    <TableCell className="text-xs tabular-nums whitespace-nowrap">
+                    </td>
+                    <td className="px-3 py-2 tabular-nums text-zinc-600 whitespace-nowrap text-[12px]">
                       {s.paid_at ? formatDate(s.paid_at) : "—"}
-                    </TableCell>
-                    <TableCell className="text-right text-xs tabular-nums">
-                      {s.days_late_paid !== null
-                        ? `${s.days_late_paid > 0 ? "+" : ""}${s.days_late_paid}j`
-                        : "—"}
-                    </TableCell>
-                    <TableCell>
+                    </td>
+                    <td className="px-3 py-2 text-right tabular-nums text-[12px]">
+                      {s.days_late_paid !== null ? (
+                        <span
+                          className={
+                            s.days_late_paid > 7
+                              ? "text-amber-600"
+                              : s.days_late_paid < 0
+                                ? "text-emerald-600"
+                                : "text-zinc-500"
+                          }
+                        >
+                          {s.days_late_paid > 0 ? "+" : ""}
+                          {s.days_late_paid}j
+                        </span>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-5 py-2">
                       <StateBadge state={s.status} />
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <span className="text-muted-foreground text-xs">{label}</span>
-      <span className="text-sm text-right">{value}</span>
+      <dt className="text-[12px] text-zinc-500">{label}</dt>
+      <dd className="text-[13px] text-zinc-900 text-right">{value}</dd>
     </div>
   );
 }

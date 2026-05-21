@@ -6,7 +6,6 @@ import { DataTable } from "@/components/data-table";
 import { StateBadge, PaymentTypeBadge } from "@/components/state-badge";
 import { formatDate, formatEurCents } from "@/lib/format";
 import type { Sale } from "@/lib/data/types";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const STATE_ORDER = ["all", "active", "completed", "canceled", "refunded", "defaulted"] as const;
@@ -30,27 +29,21 @@ export function SalesTable({ data }: { data: Sale[] }) {
         accessorKey: "sold_at",
         header: "Date",
         cell: ({ row }) => (
-          <span className="tabular-nums whitespace-nowrap">
+          <span className="tabular-nums whitespace-nowrap text-zinc-600">
             {formatDate(row.original.sold_at)}
           </span>
-        ),
-      },
-      {
-        id: "customer",
-        header: "Client",
-        accessorFn: (row) => row.customer_id,
-        cell: ({ row }) => (
-          <span className="font-mono text-xs">{row.original.customer_id}</span>
         ),
       },
       {
         accessorKey: "offer_label_snapshot",
         header: "Offre",
         cell: ({ row }) => (
-          <div className="max-w-md truncate">
-            <div>{row.original.offer_label_snapshot ?? "—"}</div>
-            <div className="text-xs text-muted-foreground truncate">
-              {row.original.offer_title_public_snapshot}
+          <div className="max-w-md min-w-0">
+            <div className="font-medium text-zinc-900 truncate">
+              {row.original.offer_label_snapshot ?? "—"}
+            </div>
+            <div className="text-[11px] text-zinc-500 truncate font-mono">
+              {row.original.customer_id}
             </div>
           </div>
         ),
@@ -63,35 +56,42 @@ export function SalesTable({ data }: { data: Sale[] }) {
       {
         id: "progress",
         header: "Avancement",
+        cell: ({ row }) => {
+          const s = row.original;
+          return (
+            <span className="text-zinc-700 tabular-nums whitespace-nowrap">
+              {s.payments_succeeded}
+              {s.payments_failed > 0 && (
+                <span className="text-red-500 text-[11px] ml-0.5">
+                  /{s.payments_failed}❌
+                </span>
+              )}
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: "amount_per_installment_cents",
+        header: "Par échéance",
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
-            {row.original.payments_succeeded}
-            {row.original.payments_failed > 0 && (
-              <span className="text-red-500 text-xs">
-                {" "}
-                / {row.original.payments_failed} échec
+          <span className="tabular-nums whitespace-nowrap text-zinc-700">
+            {formatEurCents(row.original.amount_per_installment_cents)}
+            {row.original.amount_source === "purchase_fallback" && (
+              <span
+                className="ml-1 text-amber-500 text-[11px]"
+                title="Inféré depuis purchase (peut être imprécis)"
+              >
+                ⚠
               </span>
             )}
           </span>
         ),
       },
       {
-        accessorKey: "amount_per_installment_cents",
-        header: () => <span>Par échéance</span>,
-        cell: ({ row }) => (
-          <span className="tabular-nums whitespace-nowrap">
-            {formatEurCents(row.original.amount_per_installment_cents)}
-            {row.original.amount_source === "purchase_fallback" && (
-              <span className="ml-1 text-xs text-amber-600" title="Fallback purchase">⚠</span>
-            )}
-          </span>
-        ),
-      },
-      {
         accessorKey: "net_collected_cents",
-        header: () => <span className="text-right">Encaissé net</span>,
+        header: "Encaissé net",
         cell: ({ row }) => (
-          <span className="tabular-nums font-medium whitespace-nowrap">
+          <span className="tabular-nums font-medium text-zinc-900 whitespace-nowrap">
             {formatEurCents(row.original.net_collected_cents)}
           </span>
         ),
@@ -113,15 +113,13 @@ export function SalesTable({ data }: { data: Sale[] }) {
       searchPlaceholder="Rechercher par client, offre, sale_id…"
       rowHref={(s) => `/sales/${s.sale_id}`}
       filters={
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <FilterGroup
-            label="État"
             value={stateFilter}
             options={STATE_ORDER}
             onChange={setStateFilter}
           />
           <FilterGroup
-            label="Type"
             value={typeFilter}
             options={TYPE_ORDER}
             onChange={setTypeFilter}
@@ -146,32 +144,31 @@ const LABELS: Record<string, string> = {
 };
 
 function FilterGroup({
-  label,
   value,
   options,
   onChange,
 }: {
-  label: string;
   value: string;
   options: readonly string[];
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-1.5 text-xs">
-      <span className="text-muted-foreground">{label} :</span>
-      <div className="flex flex-wrap gap-1">
-        {options.map((o) => (
-          <Button
-            key={o}
-            variant={value === o ? "default" : "outline"}
-            size="sm"
-            className={cn("h-7 text-xs px-2.5", value === o && "shadow-none")}
-            onClick={() => onChange(o)}
-          >
-            {LABELS[o] ?? o}
-          </Button>
-        ))}
-      </div>
+    <div className="inline-flex items-center rounded-md border border-zinc-200 bg-white p-0.5">
+      {options.map((o) => (
+        <button
+          key={o}
+          type="button"
+          onClick={() => onChange(o)}
+          className={cn(
+            "h-6 px-2 text-[11px] font-medium rounded transition-colors",
+            value === o
+              ? "bg-zinc-900 text-white"
+              : "text-zinc-600 hover:text-zinc-900",
+          )}
+        >
+          {LABELS[o] ?? o}
+        </button>
+      ))}
     </div>
   );
 }

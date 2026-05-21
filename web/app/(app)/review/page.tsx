@@ -1,23 +1,9 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import { getReviewList } from "@/lib/data/review";
 import { formatDate, formatEur } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -28,121 +14,142 @@ export default async function ReviewPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">Ventes à auditer</h1>
-        <p className="text-sm text-muted-foreground">
-          {rows.length} ventes multipay nécessitent une revue manuelle pour
-          fiabiliser la projection
-        </p>
-      </header>
+      <PageHeader
+        title="Ventes à auditer"
+        subtitle={`${rows.length} ventes multipay à passer en revue manuellement pour fiabiliser les projections`}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Card className="p-4">
-          <div className="text-xs text-muted-foreground">
-            Sans couverture (pas de projection)
-          </div>
-          <div className="text-2xl font-bold tabular-nums mt-1">
-            {noCoverage.length}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            ventes — {formatEur(noCoverage.reduce((s, r) => s + Number(r.total_paid_eur ?? 0), 0))} déjà payés
-          </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-xs text-muted-foreground">
-            Surpaiements (plan probablement plus long)
-          </div>
-          <div className="text-2xl font-bold tabular-nums mt-1">
-            {overpayment.length}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            ventes — {formatEur(overpayment.reduce((s, r) => s + Number(r.total_paid_eur ?? 0), 0))} déjà payés
-          </div>
-        </Card>
+        <SummaryBox
+          title="Sans projection"
+          subtitle="Pas de matching automatique trouvé"
+          count={noCoverage.length}
+          totalEur={noCoverage.reduce(
+            (s, r) => s + Number(r.total_paid_eur ?? 0),
+            0,
+          )}
+        />
+        <SummaryBox
+          title="Surpaiements"
+          subtitle="Plan probablement plus long que ce qu'on a inféré"
+          count={overpayment.length}
+          totalEur={overpayment.reduce(
+            (s, r) => s + Number(r.total_paid_eur ?? 0),
+            0,
+          )}
+        />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Liste des ventes à auditer</CardTitle>
-          <CardDescription>
-            Triées par montant déjà payé (priorité aux plus gros). Cliquez sur
-            une vente pour voir tous les paiements et confronter à la réalité.
-            <br />
-            Pour corriger, insérez le vrai nombre d'échéances dans la table{" "}
-            <code className="text-xs">app.manual_plan_overrides</code>.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Offre (internal_title)</TableHead>
-                <TableHead className="text-right">Par échéance</TableHead>
-                <TableHead className="text-right">Payés</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-                <TableHead>Vendu</TableHead>
-                <TableHead>Issue</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+      <section className="rounded-xl border border-zinc-200 bg-white">
+        <div className="px-5 pt-5 pb-3">
+          <h2 className="text-[13px] font-semibold text-zinc-900">
+            Ventes à auditer
+          </h2>
+          <p className="text-[12px] text-zinc-500 mt-0.5">
+            Triées par montant déjà payé. Cliquez pour voir le détail de la
+            vente et confronter au réel. Pour corriger : insérer le vrai
+            nombre d'échéances dans la table{" "}
+            <code className="text-[11px] bg-zinc-100 text-zinc-700 px-1 py-0.5 rounded">
+              app.manual_plan_overrides
+            </code>
+            .
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[13px]">
+            <thead className="border-y border-zinc-100">
+              <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+                <th className="px-5 py-2 text-left">Client</th>
+                <th className="px-3 py-2 text-left">Offre</th>
+                <th className="px-3 py-2 text-right">Par éch.</th>
+                <th className="px-3 py-2 text-right">Payés</th>
+                <th className="px-3 py-2 text-right">Total</th>
+                <th className="px-3 py-2 text-left">Vendu</th>
+                <th className="px-3 py-2 text-left">Problème</th>
+                <th className="px-5 py-2 text-left w-8"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
               {rows.map((r) => (
-                <TableRow key={r.sale_id}>
-                  <TableCell>
-                    <div className="font-medium text-sm">
-                      {r.customer_name ?? "—"}
+                <tr key={r.sale_id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="px-5 py-2.5">
+                    <div className="font-medium text-zinc-900 truncate max-w-[12rem]">
+                      {r.customer_name?.trim() || "—"}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-[11px] text-zinc-500 truncate max-w-[12rem]">
                       {r.customer_email}
                     </div>
-                  </TableCell>
-                  <TableCell className="max-w-sm truncate text-sm">
+                  </td>
+                  <td className="px-3 py-2.5 max-w-sm truncate text-zinc-700 text-[12px]">
                     {r.offer_internal_title ?? r.offer_public_title ?? "—"}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums text-sm">
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700">
                     {formatEur(Number(r.amount_per_installment_eur))}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums text-sm">
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700">
                     {r.installments_paid_so_far}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums font-medium text-sm">
+                  </td>
+                  <td className="px-3 py-2.5 text-right tabular-nums font-medium text-zinc-900 whitespace-nowrap">
                     {formatEur(Number(r.total_paid_eur))}
-                  </TableCell>
-                  <TableCell className="text-xs tabular-nums">
+                  </td>
+                  <td className="px-3 py-2.5 tabular-nums text-zinc-600 text-[12px]">
                     {formatDate(r.sold_at)}
-                  </TableCell>
-                  <TableCell>
-                    {r.issue_type === "no_coverage" ? (
-                      <Badge
-                        variant="outline"
-                        className="bg-zinc-50 text-zinc-700 border-zinc-200 text-[10px]"
-                      >
-                        sans projection
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="outline"
-                        className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]"
-                      >
-                        surpayé (≥{r.estimated_planned_installments})
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <span
+                      className={cn(
+                        "inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium",
+                        r.issue_type === "no_coverage"
+                          ? "bg-zinc-100 text-zinc-600"
+                          : "bg-amber-50 text-amber-700",
+                      )}
+                    >
+                      {r.issue_type === "no_coverage"
+                        ? "sans projection"
+                        : `surpayé (≥${r.estimated_planned_installments})`}
+                    </span>
+                  </td>
+                  <td className="px-5 py-2.5">
                     <Link
                       href={`/sales/${r.sale_id}`}
-                      className="text-muted-foreground hover:text-foreground"
+                      className="inline-flex items-center text-zinc-400 hover:text-zinc-900 transition-colors"
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      <ExternalLink className="h-3.5 w-3.5" />
                     </Link>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SummaryBox({
+  title,
+  subtitle,
+  count,
+  totalEur,
+}: {
+  title: string;
+  subtitle: string;
+  count: number;
+  totalEur: number;
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-white p-5">
+      <div className="text-[12px] font-medium text-zinc-500 uppercase tracking-wide">
+        {title}
+      </div>
+      <div className="text-[28px] font-semibold text-zinc-900 tabular-nums leading-none tracking-tight mt-3">
+        {count}
+      </div>
+      <div className="text-[12px] text-zinc-500 mt-2">
+        {subtitle} · <span className="text-zinc-700">{formatEur(totalEur)}</span>{" "}
+        déjà payés
+      </div>
     </div>
   );
 }

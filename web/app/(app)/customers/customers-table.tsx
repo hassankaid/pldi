@@ -15,9 +15,11 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
         accessorFn: (row) =>
           `${row.name ?? ""} ${row.email ?? ""} ${row.customer_id}`,
         cell: ({ row }) => (
-          <div>
-            <div className="font-medium">{row.original.name ?? "—"}</div>
-            <div className="text-xs text-muted-foreground">
+          <div className="min-w-0">
+            <div className="font-medium text-zinc-900 truncate">
+              {row.original.name?.trim() || "—"}
+            </div>
+            <div className="text-[11px] text-zinc-500 truncate">
               {row.original.email}
             </div>
           </div>
@@ -25,12 +27,11 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
       },
       {
         accessorKey: "total_sales",
-        header: () => <span className="text-right">Ventes</span>,
+        header: "Ventes",
         cell: ({ row }) => (
-          <span className="tabular-nums">
+          <span className="tabular-nums text-zinc-700">
             {row.original.total_sales}
-            <span className="text-xs text-muted-foreground">
-              {" "}
+            <span className="text-[11px] text-zinc-400 ml-1">
               ({row.original.active_sales} act.)
             </span>
           </span>
@@ -38,9 +39,9 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
       },
       {
         accessorKey: "total_paid_eur",
-        header: () => <span className="text-right">Total payé</span>,
+        header: "Total payé",
         cell: ({ row }) => (
-          <span className="tabular-nums font-medium whitespace-nowrap">
+          <span className="tabular-nums font-medium text-zinc-900 whitespace-nowrap">
             {formatEur(Number(row.original.total_paid_eur))}
           </span>
         ),
@@ -49,24 +50,24 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
       },
       {
         accessorKey: "impaye_amount_eur_estimated",
-        header: () => <span>Impayés</span>,
+        header: "Impayés",
         cell: ({ row }) =>
           row.original.impaye_count_estimated > 0 ? (
-            <span className="text-amber-600 tabular-nums">
+            <span className="text-amber-600 tabular-nums whitespace-nowrap">
               {formatEur(Number(row.original.impaye_amount_eur_estimated))}
-              <span className="text-xs ml-1">
+              <span className="text-[11px] ml-1 text-amber-500">
                 ({row.original.impaye_count_estimated})
               </span>
             </span>
           ) : (
-            <span className="text-muted-foreground">—</span>
+            <span className="text-zinc-300">—</span>
           ),
       },
       {
         accessorKey: "last_payment_at",
         header: "Dernier paiement",
         cell: ({ row }) => (
-          <span className="tabular-nums whitespace-nowrap text-xs">
+          <span className="tabular-nums whitespace-nowrap text-zinc-600 text-[12px]">
             {formatDate(row.original.last_payment_at)}
           </span>
         ),
@@ -80,7 +81,7 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
       data={data}
       columns={columns}
       searchKey="customer_id"
-      searchPlaceholder="Rechercher par nom, email, ID client…"
+      searchPlaceholder="Rechercher par nom, email, ID…"
       rowHref={(c) => `/customers/${c.customer_id}`}
       pageSize={50}
     />
