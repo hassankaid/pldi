@@ -1,8 +1,8 @@
 import { PageHeader } from "@/components/page-header";
 import { RevenueChart } from "@/components/revenue-chart";
+import { RevenueTable } from "@/components/revenue-table";
 import { getMonthlyRevenue } from "@/lib/data/kpi";
-import { formatDate, formatEur, formatMonthYear } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { formatEur } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +18,7 @@ export default async function RevenuePage() {
     <div className="space-y-6">
       <PageHeader
         title="Compta mensuelle"
-        subtitle={`${months.length} mois · cumul net ${formatEur(totalNet)}`}
+        subtitle={`${months.length} mois · cumul net ${formatEur(totalNet)} · cliquez un mois pour le détail`}
       />
 
       <section className="rounded-xl border border-zinc-200 bg-white">
@@ -40,76 +40,12 @@ export default async function RevenuePage() {
           <h2 className="text-[13px] font-semibold text-zinc-900">
             Détail par mois
           </h2>
+          <p className="text-[12px] text-zinc-500 mt-0.5">
+            Cliquez une ligne pour voir les mensualités payées, échecs,
+            remboursements et échéances à venir du mois.
+          </p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-[13px]">
-            <thead className="border-y border-zinc-100">
-              <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
-                <th className="px-5 py-2 text-left">Mois</th>
-                <th className="px-3 py-2 text-left">Statut</th>
-                <th className="px-3 py-2 text-right">Charges</th>
-                <th className="px-3 py-2 text-right">Brut encaissé</th>
-                <th className="px-3 py-2 text-right">Refunds</th>
-                <th className="px-3 py-2 text-right">Net</th>
-                <th className="px-5 py-2 text-left">Finalisé le</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {reversed.map((m) => (
-                <tr
-                  key={m.month}
-                  className="hover:bg-zinc-50 transition-colors"
-                >
-                  <td className="px-5 py-2.5 font-medium text-zinc-900 capitalize">
-                    {formatMonthYear(m.month)}
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] font-medium",
-                        m.revenue_status === "finalized"
-                          ? "bg-sky-50 text-sky-700"
-                          : "bg-amber-50 text-amber-700",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "h-1.5 w-1.5 rounded-full",
-                          m.revenue_status === "finalized"
-                            ? "bg-sky-500"
-                            : "bg-amber-500",
-                        )}
-                      />
-                      {m.revenue_status === "finalized" ? "Finalisé" : "Provisoire"}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700">
-                    {m.succeeded_count}
-                    {m.refund_count > 0 && (
-                      <span className="text-violet-600 text-[11px] ml-1">
-                        +{m.refund_count}↩
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700">
-                    {formatEur(Number(m.gross_collected_eur ?? 0))}
-                  </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-violet-700">
-                    {m.refund_amount_eur
-                      ? `−${formatEur(Number(m.refund_amount_eur))}`
-                      : "—"}
-                  </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums font-semibold text-zinc-900 whitespace-nowrap">
-                    {formatEur(Number(m.net_collected_eur ?? 0))}
-                  </td>
-                  <td className="px-5 py-2.5 tabular-nums text-[12px] text-zinc-500">
-                    {formatDate(m.finalized_at)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <RevenueTable rows={reversed} />
       </section>
     </div>
   );

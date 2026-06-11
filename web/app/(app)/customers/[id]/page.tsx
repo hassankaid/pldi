@@ -3,7 +3,13 @@ import { notFound } from "next/navigation";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { StateBadge, PaymentTypeBadge } from "@/components/state-badge";
+import { PunctualityBanner } from "@/components/customer-punctuality";
+import { PaymentTimeline } from "@/components/payment-timeline";
 import { getCustomerInfo, getSalesForCustomer } from "@/lib/data/sales";
+import {
+  getCustomerPunctuality,
+  getCustomerTimeline,
+} from "@/lib/data/customer";
 import {
   formatDate,
   formatDateLong,
@@ -20,9 +26,11 @@ export default async function CustomerDetailPage({
 }) {
   const { id } = await params;
 
-  const [customer, sales] = await Promise.all([
+  const [customer, sales, punctuality, timeline] = await Promise.all([
     getCustomerInfo(id),
     getSalesForCustomer(id),
+    getCustomerPunctuality(id),
+    getCustomerTimeline(id),
   ]);
 
   if (!customer) {
@@ -123,6 +131,10 @@ export default async function CustomerDetailPage({
         />
       </div>
 
+      {/* Ponctualité (estimé, multipay couvert) */}
+      <PunctualityBanner data={punctuality} />
+
+      {/* Sales history */}
       <section className="rounded-xl border border-zinc-200 bg-white">
         <div className="px-5 pt-5 pb-3">
           <h2 className="text-[13px] font-semibold text-zinc-900">
@@ -156,10 +168,7 @@ export default async function CustomerDetailPage({
                   className="hover:bg-zinc-50 cursor-pointer transition-colors"
                 >
                   <td className="px-5 py-2 tabular-nums text-zinc-700 whitespace-nowrap text-[12px]">
-                    <Link
-                      href={`/sales/${s.sale_id}`}
-                      className="block"
-                    >
+                    <Link href={`/sales/${s.sale_id}`} className="block">
                       {formatDate(s.sold_at)}
                     </Link>
                   </td>
@@ -196,6 +205,9 @@ export default async function CustomerDetailPage({
           </table>
         </div>
       </section>
+
+      {/* Timeline chronologique */}
+      <PaymentTimeline events={timeline} />
     </div>
   );
 }
