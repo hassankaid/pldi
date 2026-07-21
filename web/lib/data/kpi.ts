@@ -132,3 +132,42 @@ export async function getTopCustomers(limit = 10) {
   if (error) throw error;
   return data ?? [];
 }
+
+export type PeriodKPIs = {
+  net_eur: number;
+  gross_eur: number;
+  refund_eur: number;
+  refund_count: number;
+  succeeded_count: number;
+  failed_count: number;
+  failed_eur: number;
+};
+
+/** Transaction-level KPIs for an arbitrary [from, to] date range (inclusive). */
+export async function getPeriodKPIs(
+  from: string,
+  to: string,
+): Promise<PeriodKPIs> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("get_period_kpis", {
+    p_from: from,
+    p_to: to,
+  });
+  if (error) throw error;
+  return data as PeriodKPIs;
+}
+
+/** Monthly revenue rows for the months overlapping [fromMonth, to]. */
+export async function getMonthlyRevenueRange(fromMonth: string, to: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("v_revenue_monthly")
+    .select(
+      "month, net_collected_eur, succeeded_count, refund_count, revenue_status, finalized_at, gross_collected_eur, refund_amount_eur",
+    )
+    .gte("month", fromMonth)
+    .lte("month", to)
+    .order("month", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
