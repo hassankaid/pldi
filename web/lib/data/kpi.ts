@@ -21,32 +21,38 @@ export type DashboardKPIs = {
 export async function getDashboardKPIs(): Promise<DashboardKPIs> {
   const supabase = createAdminClient();
 
-  // 1. Sales aggregates (FACTUAL)
+  // 1. Sales counts
   const { data: sales, error: salesErr } = await supabase
     .from("sales")
-    .select(
-      "net_collected_cents, refund_cents, state_business, payment_type",
-    );
+    .select("state_business");
   if (salesErr) throw salesErr;
 
-  let totalNetCollectedCents = 0;
-  let totalRefundsEur = 0;
   let totalSales = 0;
   let activeSales = 0;
   for (const s of sales ?? []) {
-    totalNetCollectedCents += s.net_collected_cents ?? 0;
-    totalRefundsEur += (s.refund_cents ?? 0) / 100;
     totalSales += 1;
     if (s.state_business === "active") activeSales += 1;
   }
 
-  // 2. Revenue per month
+  // 2. Net & refunds — transaction-level truth (sum ALL months). Per-sale
+  // aggregation undercounts payments whose plan was never backfilled as a
+  // purchase, so we sum the monthly view (same source as the compta mensuelle).
   const { data: revenue, error: revErr } = await supabase
     .from("v_revenue_monthly")
-    .select("month, net_collected_eur")
-    .order("month", { ascending: false })
-    .limit(2);
+    .select("month, net_collected_eur, refund_amount_eur")
+    .order("month", { ascending: false });
   if (revErr) throw revErr;
+
+  const totalNetCollectedCents = Math.round(
+    (revenue ?? []).reduce(
+      (sum, r) => sum + Number(r.net_collected_eur ?? 0),
+      0,
+    ) * 100,
+  );
+  const totalRefundsEur = (revenue ?? []).reduce(
+    (sum, r) => sum + Number(r.refund_amount_eur ?? 0),
+    0,
+  );
 
   const current = revenue?.[0];
   const previous = revenue?.[1];
