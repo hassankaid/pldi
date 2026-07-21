@@ -65,27 +65,27 @@ export function DataTable<TData>({
       <div className="flex flex-wrap items-center gap-3">
         {searchKey !== undefined && (
           <div className="relative flex-1 min-w-64 max-w-md">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-zinc-400" />
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-ink-faint" />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="pl-8 h-8 text-[13px] bg-white border-zinc-200 focus-visible:border-zinc-400 focus-visible:ring-0"
+              className="pl-8 h-8 text-[13px] bg-surface border-line focus-visible:border-gold-line focus-visible:ring-gold/40"
             />
           </div>
         )}
         {filters}
-        <div className="ml-auto text-[11px] text-zinc-500 tabular-nums">
+        <div className="ml-auto text-[11px] text-ink-soft tabular-nums">
           {totalRows.toLocaleString("fr-FR")}{" "}
           {totalRows > 1 ? "résultats" : "résultat"}
         </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+      <div className="rounded-xl border border-line bg-surface overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
-            <thead className="bg-zinc-50/80 border-b border-zinc-200">
+            <thead className="bg-surface-2 border-b border-gold-line">
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
                   {hg.headers.map((header) => {
@@ -100,9 +100,9 @@ export function DataTable<TData>({
                             : undefined
                         }
                         className={cn(
-                          "px-3 py-2 text-left text-[11px] font-medium text-zinc-500 uppercase tracking-wider whitespace-nowrap",
+                          "px-3 py-2 text-left text-[11px] font-medium text-ink-faint uppercase tracking-wider whitespace-nowrap",
                           canSort &&
-                            "cursor-pointer select-none hover:text-zinc-900 transition-colors",
+                            "cursor-pointer select-none hover:text-ink transition-colors",
                         )}
                       >
                         <span className="inline-flex items-center gap-1">
@@ -115,8 +115,8 @@ export function DataTable<TData>({
                               className={cn(
                                 "h-3 w-3",
                                 sortDir
-                                  ? "text-zinc-900"
-                                  : "text-zinc-300",
+                                  ? "text-ink"
+                                  : "text-ink-faint",
                               )}
                             />
                           )}
@@ -127,12 +127,12 @@ export function DataTable<TData>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-line-soft">
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="h-24 text-center text-zinc-400 text-[13px]"
+                    className="h-24 text-center text-ink-faint text-[13px]"
                   >
                     {emptyMessage}
                   </td>
@@ -146,8 +146,8 @@ export function DataTable<TData>({
                       className={cn(
                         "group transition-colors",
                         href
-                          ? "cursor-pointer hover:bg-zinc-50"
-                          : "hover:bg-zinc-50/50",
+                          ? "cursor-pointer hover:bg-surface-2"
+                          : "hover:bg-surface-2",
                       )}
                       onClick={
                         href ? () => router.push(href) : undefined
@@ -156,7 +156,7 @@ export function DataTable<TData>({
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-3 py-2.5 text-zinc-700"
+                          className="px-3 py-2.5 text-ink-soft"
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
@@ -175,14 +175,14 @@ export function DataTable<TData>({
 
       {/* Pagination */}
       {totalRows > pageSize && (
-        <div className="flex items-center justify-between text-[12px] text-zinc-500">
+        <div className="flex items-center justify-between text-[12px] text-ink-soft">
           <div>
             Page{" "}
-            <span className="text-zinc-900 font-medium tabular-nums">
+            <span className="text-ink font-medium tabular-nums">
               {table.getState().pagination.pageIndex + 1}
             </span>{" "}
             sur{" "}
-            <span className="text-zinc-900 font-medium tabular-nums">
+            <span className="text-ink font-medium tabular-nums">
               {table.getPageCount()}
             </span>
           </div>
@@ -191,7 +191,7 @@ export function DataTable<TData>({
               type="button"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+              className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-line bg-surface text-ink-soft hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-surface transition-colors"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
@@ -199,7 +199,7 @@ export function DataTable<TData>({
               type="button"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:hover:bg-white transition-colors"
+              className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-line bg-surface text-ink-soft hover:bg-surface-2 disabled:opacity-40 disabled:hover:bg-surface transition-colors"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>

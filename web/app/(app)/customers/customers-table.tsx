@@ -16,10 +16,10 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
           `${row.name ?? ""} ${row.email ?? ""} ${row.customer_id}`,
         cell: ({ row }) => (
           <div className="min-w-0">
-            <div className="font-medium text-zinc-900 truncate">
+            <div className="font-medium text-ink truncate">
               {row.original.name?.trim() || "—"}
             </div>
-            <div className="text-[11px] text-zinc-500 truncate">
+            <div className="text-[11px] text-ink-soft truncate">
               {row.original.email}
             </div>
           </div>
@@ -29,9 +29,9 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
         accessorKey: "total_sales",
         header: "Ventes",
         cell: ({ row }) => (
-          <span className="tabular-nums text-zinc-700">
+          <span className="tabular-nums text-ink">
             {row.original.total_sales}
-            <span className="text-[11px] text-zinc-400 ml-1">
+            <span className="text-[11px] text-ink-faint ml-1">
               ({row.original.active_sales} act.)
             </span>
           </span>
@@ -41,7 +41,7 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
         accessorKey: "total_paid_eur",
         header: "Total payé",
         cell: ({ row }) => (
-          <span className="tabular-nums font-medium text-zinc-900 whitespace-nowrap">
+          <span className="tabular-nums font-medium text-ink whitespace-nowrap">
             {formatEur(Number(row.original.total_paid_eur))}
           </span>
         ),
@@ -53,21 +53,21 @@ export function CustomersTable({ data }: { data: CustomerSummary[] }) {
         header: "Impayés",
         cell: ({ row }) =>
           row.original.impaye_count_estimated > 0 ? (
-            <span className="text-amber-600 tabular-nums whitespace-nowrap">
+            <span className="text-warn tabular-nums whitespace-nowrap">
               {formatEur(Number(row.original.impaye_amount_eur_estimated))}
-              <span className="text-[11px] ml-1 text-amber-500">
+              <span className="text-[11px] ml-1 text-warn">
                 ({row.original.impaye_count_estimated})
               </span>
             </span>
           ) : (
-            <span className="text-zinc-300">—</span>
+            <span className="text-ink-faint">—</span>
           ),
       },
       {
         accessorKey: "last_payment_at",
         header: "Dernier paiement",
         cell: ({ row }) => (
-          <span className="tabular-nums whitespace-nowrap text-zinc-600 text-[12px]">
+          <span className="tabular-nums whitespace-nowrap text-ink-soft text-[12px]">
             {formatDate(row.original.last_payment_at)}
           </span>
         ),

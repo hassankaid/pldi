@@ -15,26 +15,26 @@ export default function LoginPage() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-ground p-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="h-8 w-8 rounded-md bg-zinc-900 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" strokeWidth={2.5} />
+          <div className="h-8 w-8 rounded-md border border-gold-line bg-gold-soft flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-gold-ink" strokeWidth={2.5} />
           </div>
-          <span className="text-base font-semibold text-zinc-900">PLDI</span>
-          <span className="text-[11px] text-zinc-500 tracking-wider uppercase">
+          <span className="text-base font-semibold text-ink">PLDI</span>
+          <span className="text-[11px] text-ink-faint tracking-wider uppercase">
             Compta
           </span>
         </div>
 
         {/* Card */}
-        <div className="rounded-xl border border-zinc-200 bg-white p-7 shadow-xs">
+        <div className="rounded-xl border border-line bg-surface p-7 shadow-sm">
           <div className="mb-6">
-            <h1 className="text-[18px] font-semibold text-zinc-900">
+            <h1 className="text-[18px] font-semibold text-ink">
               Connexion
             </h1>
-            <p className="text-[13px] text-zinc-500 mt-1">
+            <p className="text-[13px] text-ink-soft mt-1">
               Accédez au pilotage des ventes Kajabi.
             </p>
           </div>
@@ -43,7 +43,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="email"
-                className="text-[12px] font-medium text-zinc-700"
+                className="text-[12px] font-medium text-ink-soft"
               >
                 Email
               </Label>
@@ -60,7 +60,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="password"
-                className="text-[12px] font-medium text-zinc-700"
+                className="text-[12px] font-medium text-ink-soft"
               >
                 Mot de passe
               </Label>
@@ -91,7 +91,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-[11px] text-zinc-400 mt-6">
+        <p className="text-center text-[11px] text-ink-faint mt-6">
           Accès restreint aux utilisateurs autorisés.
         </p>
       </div>

@@ -69,22 +69,22 @@ function SummaryBox({
   tone?: "warn" | "danger";
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5">
-      <div className="text-[12px] font-medium text-zinc-500 uppercase tracking-wide">
+    <div className="rounded-xl border border-line bg-surface p-5">
+      <div className="text-[12px] font-medium text-ink-faint uppercase tracking-wide">
         {title}
       </div>
       <div
         className={
           tone === "warn"
-            ? "text-[28px] font-semibold text-amber-600 tabular-nums leading-none tracking-tight mt-3"
+            ? "text-[28px] font-semibold text-warn tabular-nums leading-none tracking-tight mt-3"
             : tone === "danger"
-              ? "text-[28px] font-semibold text-red-600 tabular-nums leading-none tracking-tight mt-3"
-              : "text-[28px] font-semibold text-zinc-900 tabular-nums leading-none tracking-tight mt-3"
+              ? "text-[28px] font-semibold text-crit tabular-nums leading-none tracking-tight mt-3"
+              : "text-[28px] font-semibold text-ink tabular-nums leading-none tracking-tight mt-3"
         }
       >
         {formatEur(eur)}
       </div>
-      <div className="text-[12px] text-zinc-500 mt-3">
+      <div className="text-[12px] text-ink-soft mt-3">
         {count} échéance{count > 1 ? "s" : ""}
         {subtitle && <> · {subtitle}</>}
       </div>

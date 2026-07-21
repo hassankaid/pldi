@@ -24,13 +24,13 @@ function classify(e: TimelineEvent): Kind {
 }
 
 const DOT: Record<Kind, string> = {
-  on_time: "bg-emerald-500",
-  charged: "bg-emerald-500",
-  late_paid: "bg-amber-500",
-  in_retry: "bg-amber-500",
-  late: "bg-orange-500",
-  missed: "bg-red-500",
-  scheduled: "bg-zinc-300",
+  on_time: "bg-pos",
+  charged: "bg-pos",
+  late_paid: "bg-warn",
+  in_retry: "bg-warn",
+  late: "bg-warn",
+  missed: "bg-crit",
+  scheduled: "bg-ink-faint",
 };
 
 const LABEL: Record<Kind, string> = {
@@ -44,13 +44,13 @@ const LABEL: Record<Kind, string> = {
 };
 
 const TEXT: Record<Kind, string> = {
-  on_time: "text-emerald-700",
-  charged: "text-emerald-700",
-  late_paid: "text-amber-700",
-  in_retry: "text-amber-700",
-  late: "text-orange-700",
-  missed: "text-red-700",
-  scheduled: "text-zinc-500",
+  on_time: "text-pos",
+  charged: "text-pos",
+  late_paid: "text-warn",
+  in_retry: "text-warn",
+  late: "text-warn",
+  missed: "text-crit",
+  scheduled: "text-ink-soft",
 };
 
 export function PaymentTimeline({ events }: { events: TimelineEvent[] }) {
@@ -65,13 +65,13 @@ export function PaymentTimeline({ events }: { events: TimelineEvent[] }) {
   const ordered = [...visible].reverse();
 
   return (
-    <section className="rounded-xl border border-zinc-200 bg-white">
+    <section className="rounded-xl border border-line bg-surface">
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>
-          <h2 className="text-[13px] font-semibold text-zinc-900">
+          <h2 className="text-[13px] font-semibold text-ink">
             Échéancier &amp; historique de paiement
           </h2>
-          <p className="text-[12px] text-zinc-500 mt-0.5">
+          <p className="text-[12px] text-ink-soft mt-0.5">
             Chronologique (du plus récent au plus ancien) · tous plans confondus
           </p>
         </div>
@@ -79,7 +79,7 @@ export function PaymentTimeline({ events }: { events: TimelineEvent[] }) {
       </div>
 
       <div className="px-5 pb-5 max-h-[28rem] overflow-y-auto">
-        <ol className="relative border-l border-zinc-200 ml-1.5">
+        <ol className="relative border-l border-line ml-1.5">
           {ordered.map((e, i) => {
             const k = classify(e);
             const amount =
@@ -96,31 +96,31 @@ export function PaymentTimeline({ events }: { events: TimelineEvent[] }) {
               <li key={`${e.sale_id}-${e.installment_n}-${i}`} className="ml-4 py-2.5">
                 <span
                   className={cn(
-                    "absolute -left-[5px] mt-1 h-2.5 w-2.5 rounded-full ring-2 ring-white",
+                    "absolute -left-[5px] mt-1 h-2.5 w-2.5 rounded-full ring-2 ring-surface",
                     DOT[k],
                   )}
                 />
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-medium text-zinc-900 tabular-nums">
+                      <span className="text-[13px] font-medium text-ink tabular-nums">
                         {formatDate(e.event_date)}
                       </span>
-                      <span className="text-[11px] text-zinc-400">·</span>
-                      <span className="text-[12px] text-zinc-600">
+                      <span className="text-[11px] text-ink-faint">·</span>
+                      <span className="text-[12px] text-ink-soft">
                         {planLabel}
                       </span>
                     </div>
-                    <div className="text-[12px] text-zinc-500 truncate max-w-md mt-0.5">
+                    <div className="text-[12px] text-ink-soft truncate max-w-md mt-0.5">
                       {e.offer_label_snapshot ?? "—"}
                     </div>
                     {e.status === "paid" &&
                       e.source === "schedule" &&
                       e.paid_at && (
-                        <div className="text-[11px] text-zinc-400 mt-0.5">
+                        <div className="text-[11px] text-ink-faint mt-0.5">
                           payé le {formatDate(e.paid_at)}
                           {e.days_late_paid != null && e.days_late_paid > 0 && (
-                            <span className="text-amber-600 ml-1">
+                            <span className="text-warn ml-1">
                               (+{e.days_late_paid}j)
                             </span>
                           )}
@@ -128,7 +128,7 @@ export function PaymentTimeline({ events }: { events: TimelineEvent[] }) {
                       )}
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-[13px] font-medium tabular-nums text-zinc-900 whitespace-nowrap">
+                    <div className="text-[13px] font-medium tabular-nums text-ink whitespace-nowrap">
                       {formatEurCents(amount)}
                     </div>
                     <div className={cn("text-[11px] font-medium mt-0.5", TEXT[k])}>
@@ -147,17 +147,17 @@ export function PaymentTimeline({ events }: { events: TimelineEvent[] }) {
 
 function Legend() {
   const items: { color: string; label: string }[] = [
-    { color: "bg-emerald-500", label: "À temps" },
-    { color: "bg-amber-500", label: "En retard" },
-    { color: "bg-red-500", label: "Manqué" },
-    { color: "bg-zinc-300", label: "À venir" },
+    { color: "bg-pos", label: "À temps" },
+    { color: "bg-warn", label: "En retard" },
+    { color: "bg-crit", label: "Manqué" },
+    { color: "bg-ink-faint", label: "À venir" },
   ];
   return (
     <div className="hidden sm:flex items-center gap-3">
       {items.map((it) => (
         <span
           key={it.label}
-          className="inline-flex items-center gap-1.5 text-[11px] text-zinc-500"
+          className="inline-flex items-center gap-1.5 text-[11px] text-ink-soft"
         >
           <span className={cn("h-2 w-2 rounded-full", it.color)} />
           {it.label}

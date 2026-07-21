@@ -3,24 +3,33 @@ import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-type Variant = "default" | "warning" | "info" | "danger" | "success" | "brand";
+type Variant =
+  | "default"
+  | "warning"
+  | "info"
+  | "danger"
+  | "success"
+  | "refund"
+  | "brand";
 
-const variantColors: Record<Variant, string> = {
-  default: "text-zinc-900",
-  brand: "text-indigo-600",
-  warning: "text-amber-600",
-  danger: "text-red-600",
-  info: "text-sky-600",
-  success: "text-emerald-600",
+const numColor: Record<Variant, string> = {
+  default: "text-ink",
+  brand: "text-ink",
+  warning: "text-warn",
+  danger: "text-crit",
+  info: "text-info",
+  success: "text-pos",
+  refund: "text-refund",
 };
 
 const iconBg: Record<Variant, string> = {
-  default: "bg-zinc-100 text-zinc-600",
-  brand: "bg-indigo-50 text-indigo-600",
-  warning: "bg-amber-50 text-amber-600",
-  danger: "bg-red-50 text-red-600",
-  info: "bg-sky-50 text-sky-600",
-  success: "bg-emerald-50 text-emerald-600",
+  default: "bg-surface-2 text-ink-soft",
+  brand: "bg-gold-soft text-gold-ink",
+  warning: "bg-warn-soft text-warn",
+  danger: "bg-crit-soft text-crit",
+  info: "bg-info-soft text-info",
+  success: "bg-pos-soft text-pos",
+  refund: "bg-refund-soft text-refund",
 };
 
 export function KpiCard({
@@ -40,50 +49,55 @@ export function KpiCard({
   badge?: ReactNode;
   icon?: LucideIcon;
 }) {
+  const hero = variant === "brand";
   return (
-    <div className="group relative rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition-colors">
-      <div className="flex items-start justify-between gap-3">
-        <div className="text-[12px] font-medium text-zinc-500 uppercase tracking-wide">
+    <div
+      className={cn(
+        "flex min-h-[138px] flex-col rounded-xl border p-[18px] shadow-sm",
+        hero
+          ? "border-gold-line bg-surface [background:radial-gradient(130%_150%_at_100%_0%,var(--gold-soft),transparent_58%),var(--surface)]"
+          : "border-line bg-surface",
+      )}
+    >
+      <div className="flex h-[22px] items-center justify-between gap-2">
+        <span className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-ink-faint">
           {title}
-        </div>
-        {Icon ? (
-          <div
-            className={cn(
-              "h-7 w-7 rounded-md flex items-center justify-center",
-              iconBg[variant],
-            )}
-          >
-            <Icon className="h-3.5 w-3.5" strokeWidth={2} />
-          </div>
-        ) : (
-          badge
-        )}
+        </span>
+        {badge ??
+          (Icon ? (
+            <span
+              className={cn(
+                "flex h-7 w-7 items-center justify-center rounded-md",
+                iconBg[variant],
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" strokeWidth={1.9} />
+            </span>
+          ) : null)}
       </div>
 
       <div
         className={cn(
-          "text-[28px] font-semibold mt-3 tabular-nums leading-none tracking-tight",
-          variantColors[variant],
+          "mt-4 flex items-baseline font-sans text-[30px] font-semibold leading-none tracking-[-0.022em] tabular-nums",
+          numColor[variant],
         )}
       >
         {value}
       </div>
 
-      <div className="flex items-baseline justify-between gap-2 mt-3 min-h-[18px]">
+      <div className="mt-auto flex items-baseline justify-between gap-2 pt-3">
         {subtitle && (
-          <div className="text-[12px] text-zinc-500 leading-tight">
-            {subtitle}
-          </div>
+          <span className="truncate text-[12px] text-ink-soft">{subtitle}</span>
         )}
         {delta !== null && delta !== undefined && (
-          <div
+          <span
             className={cn(
-              "inline-flex items-center gap-0.5 text-[11px] font-medium tabular-nums",
+              "inline-flex shrink-0 items-center gap-0.5 text-[11px] font-medium tabular-nums",
               delta > 0
-                ? "text-emerald-600"
+                ? "text-pos"
                 : delta < 0
-                  ? "text-red-600"
-                  : "text-zinc-500",
+                  ? "text-crit"
+                  : "text-ink-faint",
             )}
           >
             {delta > 0 ? (
@@ -94,7 +108,7 @@ export function KpiCard({
               <Minus className="h-3 w-3" />
             )}
             {Math.abs(delta).toFixed(1)}%
-          </div>
+          </span>
         )}
       </div>
     </div>

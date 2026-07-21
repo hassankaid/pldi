@@ -35,10 +35,10 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
           `${row.customer_name ?? ""} ${row.customer_email ?? ""}`,
         cell: ({ row }) => (
           <div className="min-w-0">
-            <div className="font-medium text-zinc-900 truncate">
+            <div className="font-medium text-ink truncate">
               {row.original.customer_name?.trim() || "—"}
             </div>
-            <div className="text-[11px] text-zinc-500 truncate">
+            <div className="text-[11px] text-ink-soft truncate">
               {row.original.customer_email}
             </div>
           </div>
@@ -48,7 +48,7 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorKey: "offer_label_snapshot",
         header: "Offre",
         cell: ({ row }) => (
-          <div className="max-w-xs truncate text-zinc-700 text-[12px]">
+          <div className="max-w-xs truncate text-ink-soft text-[12px]">
             {row.original.offer_label_snapshot ?? "—"}
           </div>
         ),
@@ -57,9 +57,9 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         id: "installment",
         header: "Échéance",
         cell: ({ row }) => (
-          <span className="text-zinc-700 tabular-nums text-[12px]">
+          <span className="text-ink-soft tabular-nums text-[12px]">
             <span className="font-medium">{row.original.installment_n}</span>
-            <span className="text-zinc-400">
+            <span className="text-ink-faint">
               /{row.original.plan_total_installments}
             </span>
           </span>
@@ -69,7 +69,7 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorKey: "expected_at",
         header: "Date prévue",
         cell: ({ row }) => (
-          <span className="text-zinc-700 tabular-nums whitespace-nowrap text-[12px]">
+          <span className="text-ink-soft tabular-nums whitespace-nowrap text-[12px]">
             {formatDate(row.original.expected_at)}
           </span>
         ),
@@ -84,10 +84,10 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
               className={cn(
                 "tabular-nums font-medium text-[12px]",
                 d > 60
-                  ? "text-red-600"
+                  ? "text-crit"
                   : d > 21
-                    ? "text-orange-600"
-                    : "text-amber-600",
+                    ? "text-warn"
+                    : "text-warn",
               )}
             >
               {d}j
@@ -99,7 +99,7 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
         accessorKey: "expected_eur",
         header: "Montant",
         cell: ({ row }) => (
-          <span className="tabular-nums font-medium text-zinc-900 whitespace-nowrap">
+          <span className="tabular-nums font-medium text-ink whitespace-nowrap">
             {formatEur(Number(row.original.expected_eur))}
           </span>
         ),
@@ -121,7 +121,7 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
       searchPlaceholder="Rechercher par client, email, offre…"
       rowHref={(i) => `/sales/${i.sale_id}`}
       filters={
-        <div className="inline-flex items-center rounded-md border border-zinc-200 bg-white p-0.5">
+        <div className="inline-flex items-center rounded-md border border-line bg-surface p-0.5">
           {STATUS_FILTER.map((s) => (
             <button
               key={s}
@@ -130,8 +130,8 @@ export function ImpayesTable({ data }: { data: ImpayeRow[] }) {
               className={cn(
                 "h-6 px-2 text-[11px] font-medium rounded transition-colors",
                 statusFilter === s
-                  ? "bg-zinc-900 text-white"
-                  : "text-zinc-600 hover:text-zinc-900",
+                  ? "bg-gold-soft text-gold-ink"
+                  : "text-ink-soft hover:text-ink",
               )}
             >
               {STATUS_LABELS[s]}

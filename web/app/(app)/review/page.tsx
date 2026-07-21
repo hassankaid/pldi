@@ -40,16 +40,16 @@ export default async function ReviewPage() {
         />
       </div>
 
-      <section className="rounded-xl border border-zinc-200 bg-white">
+      <section className="rounded-xl border border-line bg-surface">
         <div className="px-5 pt-5 pb-3">
-          <h2 className="text-[13px] font-semibold text-zinc-900">
+          <h2 className="text-[13px] font-semibold text-ink">
             Ventes à auditer
           </h2>
-          <p className="text-[12px] text-zinc-500 mt-0.5">
+          <p className="text-[12px] text-ink-soft mt-0.5">
             Triées par montant déjà payé. Cliquez pour voir le détail de la
             vente et confronter au réel. Pour corriger : insérer le vrai
             nombre d'échéances dans la table{" "}
-            <code className="text-[11px] bg-zinc-100 text-zinc-700 px-1 py-0.5 rounded">
+            <code className="text-[11px] bg-surface-2 text-ink-soft px-1 py-0.5 rounded">
               app.manual_plan_overrides
             </code>
             .
@@ -57,8 +57,8 @@ export default async function ReviewPage() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
-            <thead className="border-y border-zinc-100">
-              <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+            <thead className="border-b border-gold-line">
+              <tr className="text-[11px] font-medium text-ink-faint uppercase tracking-wider">
                 <th className="px-5 py-2 text-left">Client</th>
                 <th className="px-3 py-2 text-left">Offre</th>
                 <th className="px-3 py-2 text-right">Par éch.</th>
@@ -69,30 +69,30 @@ export default async function ReviewPage() {
                 <th className="px-5 py-2 text-left w-8"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-line-soft">
               {rows.map((r) => (
-                <tr key={r.sale_id} className="hover:bg-zinc-50 transition-colors">
+                <tr key={r.sale_id} className="hover:bg-surface-2 transition-colors">
                   <td className="px-5 py-2.5">
-                    <div className="font-medium text-zinc-900 truncate max-w-[12rem]">
+                    <div className="font-medium text-ink truncate max-w-[12rem]">
                       {r.customer_name?.trim() || "—"}
                     </div>
-                    <div className="text-[11px] text-zinc-500 truncate max-w-[12rem]">
+                    <div className="text-[11px] text-ink-soft truncate max-w-[12rem]">
                       {r.customer_email}
                     </div>
                   </td>
-                  <td className="px-3 py-2.5 max-w-sm truncate text-zinc-700 text-[12px]">
+                  <td className="px-3 py-2.5 max-w-sm truncate text-ink-soft text-[12px]">
                     {r.offer_internal_title ?? r.offer_public_title ?? "—"}
                   </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700">
+                  <td className="px-3 py-2.5 text-right tabular-nums text-ink-soft">
                     {formatEur(Number(r.amount_per_installment_eur))}
                   </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700">
+                  <td className="px-3 py-2.5 text-right tabular-nums text-ink-soft">
                     {r.installments_paid_so_far}
                   </td>
-                  <td className="px-3 py-2.5 text-right tabular-nums font-medium text-zinc-900 whitespace-nowrap">
+                  <td className="px-3 py-2.5 text-right tabular-nums font-medium text-ink whitespace-nowrap">
                     {formatEur(Number(r.total_paid_eur))}
                   </td>
-                  <td className="px-3 py-2.5 tabular-nums text-zinc-600 text-[12px]">
+                  <td className="px-3 py-2.5 tabular-nums text-ink-soft text-[12px]">
                     {formatDate(r.sold_at)}
                   </td>
                   <td className="px-3 py-2.5">
@@ -100,8 +100,8 @@ export default async function ReviewPage() {
                       className={cn(
                         "inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium",
                         r.issue_type === "no_coverage"
-                          ? "bg-zinc-100 text-zinc-600"
-                          : "bg-amber-50 text-amber-700",
+                          ? "bg-surface-2 text-ink-soft"
+                          : "bg-warn-soft text-warn",
                       )}
                     >
                       {r.issue_type === "no_coverage"
@@ -112,7 +112,7 @@ export default async function ReviewPage() {
                   <td className="px-5 py-2.5">
                     <Link
                       href={`/sales/${r.sale_id}`}
-                      className="inline-flex items-center text-zinc-400 hover:text-zinc-900 transition-colors"
+                      className="inline-flex items-center text-ink-faint hover:text-ink transition-colors"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                     </Link>
@@ -139,15 +139,15 @@ function SummaryBox({
   totalEur: number;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5">
-      <div className="text-[12px] font-medium text-zinc-500 uppercase tracking-wide">
+    <div className="rounded-xl border border-line bg-surface p-5">
+      <div className="text-[12px] font-medium text-ink-faint uppercase tracking-wide">
         {title}
       </div>
-      <div className="text-[28px] font-semibold text-zinc-900 tabular-nums leading-none tracking-tight mt-3">
+      <div className="text-[28px] font-semibold text-ink tabular-nums leading-none tracking-tight mt-3">
         {count}
       </div>
-      <div className="text-[12px] text-zinc-500 mt-2">
-        {subtitle} · <span className="text-zinc-700">{formatEur(totalEur)}</span>{" "}
+      <div className="text-[12px] text-ink-soft mt-2">
+        {subtitle} · <span className="text-ink">{formatEur(totalEur)}</span>{" "}
         déjà payés
       </div>
     </div>

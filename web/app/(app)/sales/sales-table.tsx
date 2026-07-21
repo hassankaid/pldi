@@ -29,7 +29,7 @@ export function SalesTable({ data }: { data: Sale[] }) {
         accessorKey: "sold_at",
         header: "Date",
         cell: ({ row }) => (
-          <span className="tabular-nums whitespace-nowrap text-zinc-600">
+          <span className="tabular-nums whitespace-nowrap text-ink-soft">
             {formatDate(row.original.sold_at)}
           </span>
         ),
@@ -39,10 +39,10 @@ export function SalesTable({ data }: { data: Sale[] }) {
         header: "Offre",
         cell: ({ row }) => (
           <div className="max-w-md min-w-0">
-            <div className="font-medium text-zinc-900 truncate">
+            <div className="font-medium text-ink truncate">
               {row.original.offer_label_snapshot ?? "—"}
             </div>
-            <div className="text-[11px] text-zinc-500 truncate font-mono">
+            <div className="text-[11px] text-ink-soft truncate font-mono">
               {row.original.customer_id}
             </div>
           </div>
@@ -59,10 +59,10 @@ export function SalesTable({ data }: { data: Sale[] }) {
         cell: ({ row }) => {
           const s = row.original;
           return (
-            <span className="text-zinc-700 tabular-nums whitespace-nowrap">
+            <span className="text-ink-soft tabular-nums whitespace-nowrap">
               {s.payments_succeeded}
               {s.payments_failed > 0 && (
-                <span className="text-red-500 text-[11px] ml-0.5">
+                <span className="text-crit text-[11px] ml-0.5">
                   /{s.payments_failed}❌
                 </span>
               )}
@@ -74,11 +74,11 @@ export function SalesTable({ data }: { data: Sale[] }) {
         accessorKey: "amount_per_installment_cents",
         header: "Par échéance",
         cell: ({ row }) => (
-          <span className="tabular-nums whitespace-nowrap text-zinc-700">
+          <span className="tabular-nums whitespace-nowrap text-ink-soft">
             {formatEurCents(row.original.amount_per_installment_cents)}
             {row.original.amount_source === "purchase_fallback" && (
               <span
-                className="ml-1 text-amber-500 text-[11px]"
+                className="ml-1 text-warn text-[11px]"
                 title="Inféré depuis purchase (peut être imprécis)"
               >
                 ⚠
@@ -91,7 +91,7 @@ export function SalesTable({ data }: { data: Sale[] }) {
         accessorKey: "net_collected_cents",
         header: "Encaissé net",
         cell: ({ row }) => (
-          <span className="tabular-nums font-medium text-zinc-900 whitespace-nowrap">
+          <span className="tabular-nums font-medium text-ink whitespace-nowrap">
             {formatEurCents(row.original.net_collected_cents)}
           </span>
         ),
@@ -153,7 +153,7 @@ function FilterGroup({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="inline-flex items-center rounded-md border border-zinc-200 bg-white p-0.5">
+    <div className="inline-flex items-center rounded-md border border-line bg-surface p-0.5">
       {options.map((o) => (
         <button
           key={o}
@@ -162,8 +162,8 @@ function FilterGroup({
           className={cn(
             "h-6 px-2 text-[11px] font-medium rounded transition-colors",
             value === o
-              ? "bg-zinc-900 text-white"
-              : "text-zinc-600 hover:text-zinc-900",
+              ? "bg-gold-soft text-gold-ink"
+              : "text-ink-soft hover:text-ink",
           )}
         >
           {LABELS[o] ?? o}

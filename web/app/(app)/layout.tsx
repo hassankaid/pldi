@@ -9,10 +9,10 @@ export default async function ProtectedLayout({
   const user = await requireUser();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white">
+    <div className="flex h-screen overflow-hidden bg-ground">
       <AppSidebar userEmail={user.email ?? "—"} />
-      <main className="flex-1 overflow-y-auto bg-zinc-50/30">
-        <div className="px-6 lg:px-10 py-8 max-w-[1600px] mx-auto">
+      <main className="flex-1 overflow-y-auto bg-ground">
+        <div className="mx-auto max-w-[1500px] px-6 py-9 lg:px-10">
           {children}
         </div>
       </main>

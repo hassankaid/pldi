@@ -15,19 +15,20 @@ const labels: Record<string, string> = {
   failed: "Échec",
 };
 
-const variants: Record<string, { dot: string; text: string; bg: string }> = {
-  active: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50" },
-  completed: { dot: "bg-sky-500", text: "text-sky-700", bg: "bg-sky-50" },
-  canceled: { dot: "bg-zinc-400", text: "text-zinc-600", bg: "bg-zinc-100" },
-  refunded: { dot: "bg-violet-500", text: "text-violet-700", bg: "bg-violet-50" },
-  defaulted: { dot: "bg-red-500", text: "text-red-700", bg: "bg-red-50" },
-  paid: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50" },
-  scheduled: { dot: "bg-sky-500", text: "text-sky-700", bg: "bg-sky-50" },
-  in_retry: { dot: "bg-amber-500", text: "text-amber-700", bg: "bg-amber-50" },
-  late: { dot: "bg-orange-500", text: "text-orange-700", bg: "bg-orange-50" },
-  missed: { dot: "bg-red-500", text: "text-red-700", bg: "bg-red-50" },
-  succeeded: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50" },
-  failed: { dot: "bg-red-500", text: "text-red-700", bg: "bg-red-50" },
+// dot + text + soft background, all from the brand semantic tokens
+const variants: Record<string, { dot: string; cls: string }> = {
+  active: { dot: "bg-pos", cls: "bg-pos-soft text-pos" },
+  paid: { dot: "bg-pos", cls: "bg-pos-soft text-pos" },
+  succeeded: { dot: "bg-pos", cls: "bg-pos-soft text-pos" },
+  completed: { dot: "bg-info", cls: "bg-info-soft text-info" },
+  scheduled: { dot: "bg-info", cls: "bg-info-soft text-info" },
+  canceled: { dot: "bg-ink-faint", cls: "bg-surface-2 text-ink-soft" },
+  refunded: { dot: "bg-refund", cls: "bg-refund-soft text-refund" },
+  in_retry: { dot: "bg-warn", cls: "bg-warn-soft text-warn" },
+  late: { dot: "bg-warn", cls: "bg-warn-soft text-warn" },
+  defaulted: { dot: "bg-crit", cls: "bg-crit-soft text-crit" },
+  missed: { dot: "bg-crit", cls: "bg-crit-soft text-crit" },
+  failed: { dot: "bg-crit", cls: "bg-crit-soft text-crit" },
 };
 
 export function StateBadge({ state }: { state: string }) {
@@ -35,9 +36,8 @@ export function StateBadge({ state }: { state: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] font-medium",
-        v.bg,
-        v.text,
+        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium",
+        v.cls,
       )}
     >
       <span className={cn("h-1.5 w-1.5 rounded-full", v.dot)} />
@@ -47,31 +47,24 @@ export function StateBadge({ state }: { state: string }) {
 }
 
 export function PaymentTypeBadge({ type }: { type: string | null }) {
-  const map: Record<string, { label: string; bg: string; text: string }> = {
-    multipay: {
-      label: "Plan ×N",
-      bg: "bg-indigo-50",
-      text: "text-indigo-700",
-    },
-    single: { label: "One-shot", bg: "bg-blue-50", text: "text-blue-700" },
+  const map: Record<string, { label: string; cls: string }> = {
+    multipay: { label: "Plan ×N", cls: "bg-gold-soft text-gold-ink" },
+    single: { label: "One-shot", cls: "bg-info-soft text-info" },
     subscription: {
       label: "Abonnement",
-      bg: "bg-violet-50",
-      text: "text-violet-700",
+      cls: "bg-surface-2 text-ink-soft border border-line",
     },
-    free: { label: "Gratuit", bg: "bg-zinc-100", text: "text-zinc-600" },
+    free: { label: "Gratuit", cls: "bg-surface-2 text-ink-faint" },
   };
   const entry = map[type ?? ""] ?? {
     label: type ?? "—",
-    bg: "bg-zinc-100",
-    text: "text-zinc-600",
+    cls: "bg-surface-2 text-ink-soft",
   };
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium",
-        entry.bg,
-        entry.text,
+        "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
+        entry.cls,
       )}
     >
       {entry.label}

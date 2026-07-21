@@ -65,20 +65,20 @@ export default async function MonthDetailPage({
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] font-medium",
                 provisional
-                  ? "bg-amber-50 text-amber-700"
-                  : "bg-sky-50 text-sky-700",
+                  ? "bg-warn-soft text-warn"
+                  : "bg-info-soft text-info",
               )}
             >
               <span
                 className={cn(
                   "h-1.5 w-1.5 rounded-full",
-                  provisional ? "bg-amber-500" : "bg-sky-500",
+                  provisional ? "bg-warn" : "bg-info",
                 )}
               />
               {provisional ? "Provisoire" : "Finalisé"}
             </span>
             {provisional && (
-              <span className="text-[12px] text-zinc-500">
+              <span className="text-[12px] text-ink-soft">
                 Chiffres susceptibles d'évoluer jusqu'à clôture
               </span>
             )}
@@ -132,7 +132,7 @@ export default async function MonthDetailPage({
           title="CA net encaissé"
           value={formatEur(Number(acc.ca_net_eur))}
           subtitle={`${acc.succeeded_count} charges · ${acc.refund_count} refund${acc.refund_count > 1 ? "s" : ""}`}
-          variant="success"
+          variant="brand"
           icon={TrendingUp}
         />
         <KpiCard
@@ -146,7 +146,7 @@ export default async function MonthDetailPage({
           title="Remboursé"
           value={refundEur > 0 ? `−${formatEur(refundEur)}` : "—"}
           subtitle={`${acc.refund_count} remboursement${acc.refund_count > 1 ? "s" : ""}`}
-          variant={refundEur > 0 ? "default" : "default"}
+          variant={refundEur > 0 ? "refund" : "default"}
           icon={Undo2}
         />
         <KpiCard
@@ -172,7 +172,7 @@ export default async function MonthDetailPage({
         />
       </div>
 
-      <p className="text-[11px] text-zinc-500 -mt-2">
+      <p className="text-[11px] text-ink-soft -mt-2">
         Cartes vertes/grises = <span className="font-medium">factuel</span> (argent réellement
         encaissé). Cartes bleue/ambre = <span className="font-medium">estimé</span> d'après
         l'échéancier projeté, non encore encaissé.

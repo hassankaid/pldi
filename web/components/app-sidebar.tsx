@@ -10,10 +10,10 @@ import {
   CalendarClock,
   ClipboardList,
   LogOut,
-  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logout } from "@/app/actions/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 type NavItem = {
   href: string;
@@ -50,29 +50,29 @@ export function AppSidebar({ userEmail }: { userEmail: string }) {
   const initial = userEmail.charAt(0).toUpperCase();
 
   return (
-    <aside className="hidden md:flex md:w-60 md:flex-col bg-zinc-50/50 border-r border-zinc-200">
+    <aside className="hidden md:flex md:w-64 md:flex-col bg-surface border-r border-line">
       {/* Brand */}
-      <div className="flex h-14 items-center px-4 border-b border-zinc-200">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="h-7 w-7 rounded-md bg-zinc-900 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" strokeWidth={2.5} />
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-sm font-semibold text-zinc-900 group-hover:text-zinc-700 transition-colors">
+      <div className="flex h-16 items-center px-5 border-b border-line">
+        <Link href="/" className="flex items-center gap-3 group">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold-line bg-gold-soft font-display text-lg font-semibold text-gold-ink">
+            ✦
+          </span>
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-xl font-semibold tracking-wide text-ink transition-colors group-hover:text-gold-ink">
               PLDI
             </span>
-            <span className="text-[10px] text-zinc-500 mt-0.5 tracking-wider uppercase">
-              Compta
+            <span className="mt-1 text-[9.5px] font-medium uppercase tracking-[0.22em] text-ink-faint">
+              Comptabilité
             </span>
-          </div>
+          </span>
         </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+      <nav className="flex-1 overflow-y-auto px-3 py-5 space-y-6">
         {SECTIONS.map((section) => (
           <div key={section.label}>
-            <div className="px-2 mb-1.5 text-[10px] font-medium tracking-wider uppercase text-zinc-400">
+            <div className="px-3 mb-2 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-faint">
               {section.label}
             </div>
             <div className="space-y-0.5">
@@ -87,18 +87,23 @@ export function AppSidebar({ userEmail }: { userEmail: string }) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "group relative flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors",
+                      "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition-colors",
                       active
-                        ? "bg-zinc-900 text-white"
-                        : "text-zinc-600 hover:bg-zinc-200/60 hover:text-zinc-900",
+                        ? "bg-gold-soft text-gold-ink font-medium"
+                        : "text-ink-soft hover:bg-surface-2 hover:text-ink",
                     )}
                   >
+                    {active && (
+                      <span className="absolute left-0 top-2 bottom-2 w-[2.5px] rounded-full bg-gold" />
+                    )}
                     <Icon
                       className={cn(
-                        "h-4 w-4 shrink-0",
-                        active ? "text-white" : "text-zinc-400 group-hover:text-zinc-600",
+                        "h-[17px] w-[17px] shrink-0",
+                        active
+                          ? "text-gold-ink"
+                          : "text-ink-faint group-hover:text-ink-soft",
                       )}
-                      strokeWidth={active ? 2 : 1.75}
+                      strokeWidth={1.75}
                     />
                     {item.label}
                   </Link>
@@ -109,25 +114,26 @@ export function AppSidebar({ userEmail }: { userEmail: string }) {
         ))}
       </nav>
 
-      {/* User card */}
-      <div className="border-t border-zinc-200 p-3">
-        <div className="flex items-center gap-2.5 px-2 py-1.5 mb-1">
-          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-semibold shrink-0">
+      {/* Footer */}
+      <div className="border-t border-line-soft p-3">
+        <div className="flex items-center gap-3 px-2 py-2">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gold to-[#8f6f22] text-[12px] font-semibold text-[#1b1710]">
             {initial}
-          </div>
+          </span>
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-medium text-zinc-900 truncate">
+            <div className="truncate text-[13px] font-medium text-ink">
               {userEmail}
             </div>
-            <div className="text-[10px] text-zinc-500 mt-px">Admin</div>
+            <div className="text-[11px] text-ink-faint">Admin</div>
           </div>
+          <ThemeToggle />
         </div>
         <form action={logout}>
           <button
             type="submit"
-            className="w-full flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-zinc-500 hover:bg-zinc-200/60 hover:text-zinc-900 transition-colors"
+            className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
           >
-            <LogOut className="h-4 w-4 text-zinc-400" strokeWidth={1.75} />
+            <LogOut className="h-4 w-4 text-ink-faint" strokeWidth={1.75} />
             Se déconnecter
           </button>
         </form>

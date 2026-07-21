@@ -9,46 +9,58 @@ export function PageHeader({
   subtitle,
   breadcrumbs,
   actions,
+  eyebrow,
 }: {
   title: ReactNode;
   subtitle?: ReactNode;
   breadcrumbs?: Crumb[];
   actions?: ReactNode;
+  eyebrow?: string;
 }) {
   return (
-    <div className="space-y-3 pb-1">
+    <div className="pb-1">
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center gap-1 text-[12px] text-zinc-500">
+        <nav className="mb-3 flex items-center gap-1.5 text-[12px] text-ink-faint">
           {breadcrumbs.map((c, i) => (
-            <span key={i} className="flex items-center gap-1">
-              {i > 0 && <ChevronRight className="h-3 w-3 text-zinc-400" />}
+            <span key={i} className="flex items-center gap-1.5">
+              {i > 0 && <ChevronRight className="h-3 w-3 text-ink-faint" />}
               {c.href ? (
                 <Link
                   href={c.href}
-                  className="hover:text-zinc-900 transition-colors"
+                  className="transition-colors hover:text-gold-ink"
                 >
                   {c.label}
                 </Link>
               ) : (
-                <span className="text-zinc-700">{c.label}</span>
+                <span className="text-ink-soft">{c.label}</span>
               )}
             </span>
           ))}
         </nav>
       )}
-      <div className="flex flex-wrap items-end justify-between gap-3">
+
+      {eyebrow && (
+        <div className="mb-3 flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.16em] text-gold-ink">
+          <span className="h-px w-[18px] bg-gold" />
+          {eyebrow}
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-[22px] font-semibold tracking-tight text-zinc-900 leading-tight">
+          <h1 className="font-display text-[30px] font-semibold leading-[1.02] tracking-[0.005em] text-ink sm:text-[38px]">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-[13px] text-zinc-500 mt-1">{subtitle}</p>
+            <p className="mt-2 text-[13px] text-ink-soft">{subtitle}</p>
           )}
         </div>
         {actions && (
-          <div className="flex items-center gap-2 shrink-0">{actions}</div>
+          <div className="flex shrink-0 items-center gap-2">{actions}</div>
         )}
       </div>
+
+      <div className="ledger-rule mt-5" />
     </div>
   );
 }

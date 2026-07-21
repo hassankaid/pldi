@@ -21,12 +21,12 @@ export default async function RevenuePage() {
         subtitle={`${months.length} mois · cumul net ${formatEur(totalNet)} · cliquez un mois pour le détail`}
       />
 
-      <section className="rounded-xl border border-zinc-200 bg-white">
+      <section className="rounded-xl border border-line bg-surface">
         <div className="px-5 pt-5 pb-3">
-          <h2 className="text-[13px] font-semibold text-zinc-900">
+          <h2 className="text-[13px] font-semibold text-ink">
             Évolution mensuelle du CA
           </h2>
-          <p className="text-[12px] text-zinc-500 mt-0.5">
+          <p className="text-[12px] text-ink-soft mt-0.5">
             En indigo : mois finalisé · En ambre : mois provisoire (peut bouger)
           </p>
         </div>
@@ -35,12 +35,12 @@ export default async function RevenuePage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-zinc-200 bg-white">
+      <section className="rounded-xl border border-line bg-surface">
         <div className="px-5 pt-5 pb-3">
-          <h2 className="text-[13px] font-semibold text-zinc-900">
+          <h2 className="text-[13px] font-semibold text-ink">
             Détail par mois
           </h2>
-          <p className="text-[12px] text-zinc-500 mt-0.5">
+          <p className="text-[12px] text-ink-soft mt-0.5">
             Cliquez une ligne pour voir les mensualités payées, échecs,
             remboursements et échéances à venir du mois.
           </p>

@@ -38,54 +38,54 @@ export function RevenueChart({ data }: { data: Row[] }) {
           >
             <CartesianGrid
               strokeDasharray="0"
-              stroke="#f4f4f5"
+              stroke="var(--line)"
               vertical={false}
             />
             <XAxis
               dataKey="monthShort"
-              tick={{ fontSize: 11, fill: "#71717a" }}
+              tick={{ fontSize: 11, fill: "var(--ink-faint)" }}
               tickLine={false}
               axisLine={false}
               dy={4}
             />
             <YAxis
               tickFormatter={(v: number) => formatEurCompact(v)}
-              tick={{ fontSize: 11, fill: "#71717a" }}
+              tick={{ fontSize: 11, fill: "var(--ink-faint)" }}
               tickLine={false}
               axisLine={false}
               width={50}
             />
             <Tooltip
-              cursor={{ fill: "rgba(99, 102, 241, 0.05)" }}
+              cursor={{ fill: "rgba(201, 168, 76, 0.06)" }}
               content={({ active, payload }) => {
                 if (!active || !payload?.[0]) return null;
                 const d = payload[0].payload as (typeof formatted)[number];
                 return (
-                  <div className="rounded-lg border border-zinc-200 bg-white shadow-sm p-3 text-[12px]">
-                    <div className="font-medium text-zinc-900 capitalize mb-1.5">
+                  <div className="rounded-lg border border-line bg-surface shadow-sm p-3 text-[12px]">
+                    <div className="font-medium text-ink capitalize mb-1.5">
                       {d.monthLabel}
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-between gap-4">
-                        <span className="text-zinc-500">CA net</span>
-                        <span className="font-semibold tabular-nums text-zinc-900">
+                        <span className="text-ink-soft">CA net</span>
+                        <span className="font-semibold tabular-nums text-ink">
                           {formatEur(d.net)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-4">
-                        <span className="text-zinc-500">Charges</span>
-                        <span className="tabular-nums text-zinc-700">
+                        <span className="text-ink-soft">Charges</span>
+                        <span className="tabular-nums text-ink">
                           {d.succeeded_count}
                           {d.refund_count > 0 &&
                             ` (+${d.refund_count} refund)`}
                         </span>
                       </div>
-                      <div className="pt-1 mt-1 border-t border-zinc-100">
+                      <div className="pt-1 mt-1 border-t border-line-soft">
                         <span
                           className={
                             d.revenue_status === "finalized"
-                              ? "text-emerald-700 text-[11px]"
-                              : "text-amber-700 text-[11px]"
+                              ? "text-pos text-[11px]"
+                              : "text-warn text-[11px]"
                           }
                         >
                           {d.revenue_status === "finalized"
@@ -103,7 +103,9 @@ export function RevenueChart({ data }: { data: Row[] }) {
                 <Cell
                   key={i}
                   fill={
-                    d.revenue_status === "provisional" ? "#fbbf24" : "#6366f1"
+                    d.revenue_status === "provisional"
+                      ? "var(--warn)"
+                      : "var(--gold)"
                   }
                 />
               ))}
@@ -111,14 +113,14 @@ export function RevenueChart({ data }: { data: Row[] }) {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex items-center gap-4 text-[11px] text-zinc-500">
+      <div className="flex items-center gap-4 text-[11px] text-ink-soft">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-sm bg-indigo-500" />
+          <span className="h-2 w-2 rounded-sm bg-gold" />
           Finalisé
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-sm bg-amber-400" />
-          Provisoire <span className="text-zinc-400">(jusqu'à M+1+21j)</span>
+          <span className="h-2 w-2 rounded-sm bg-warn" />
+          Provisoire <span className="text-ink-faint">(jusqu'à M+1+21j)</span>
         </span>
       </div>
     </div>

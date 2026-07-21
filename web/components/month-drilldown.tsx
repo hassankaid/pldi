@@ -36,9 +36,9 @@ export function MonthDrilldown({
   ];
 
   return (
-    <section className="rounded-xl border border-zinc-200 bg-white overflow-hidden">
+    <section className="rounded-xl border border-line bg-surface overflow-hidden">
       {/* Tab bar */}
-      <div className="flex items-center gap-1 px-3 pt-3 border-b border-zinc-100 overflow-x-auto">
+      <div className="flex items-center gap-1 px-3 pt-3 border-b border-line-soft overflow-x-auto">
         {tabs.map((t) => (
           <button
             key={t.key}
@@ -47,12 +47,12 @@ export function MonthDrilldown({
             className={cn(
               "relative px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors -mb-px border-b-2",
               tab === t.key
-                ? "border-zinc-900 text-zinc-900"
-                : "border-transparent text-zinc-500 hover:text-zinc-800",
+                ? "border-gold text-gold-ink"
+                : "border-transparent text-ink-soft hover:text-ink",
             )}
           >
             {t.label}
-            <span className="ml-1.5 text-[11px] text-zinc-400 tabular-nums">
+            <span className="ml-1.5 text-[11px] text-ink-faint tabular-nums">
               {t.count}
             </span>
           </button>
@@ -71,8 +71,8 @@ export function MonthDrilldown({
 
 function THead({ cols }: { cols: { label: string; align?: "right" }[] }) {
   return (
-    <thead className="border-b border-zinc-100">
-      <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+    <thead className="border-b border-gold-line">
+      <tr className="text-[11px] font-medium text-ink-faint uppercase tracking-wider">
         {cols.map((c, i) => (
           <th
             key={i}
@@ -108,15 +108,15 @@ function CustomerCell({
         router.push(`/customers/${id}`);
       }}
     >
-      <div className="font-medium text-zinc-900 truncate">{name?.trim() || "—"}</div>
-      <div className="text-[11px] text-zinc-500 truncate">{email}</div>
+      <div className="font-medium text-ink truncate">{name?.trim() || "—"}</div>
+      <div className="text-[11px] text-ink-soft truncate">{email}</div>
     </button>
   );
 }
 
 function Empty({ message }: { message: string }) {
   return (
-    <div className="px-4 py-12 text-center text-[13px] text-zinc-400">
+    <div className="px-4 py-12 text-center text-[13px] text-ink-faint">
       {message}
     </div>
   );
@@ -139,41 +139,41 @@ function PaidTable({ rows, totalEur }: { rows: PaymentDetail[]; totalEur: number
             { label: "Montant", align: "right" },
           ]}
         />
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-line-soft">
           {rows.map((p) => (
             <tr
               key={p.payment_id}
-              className="hover:bg-zinc-50 cursor-pointer transition-colors"
+              className="hover:bg-surface-2 cursor-pointer transition-colors"
               onClick={() => router.push(`/sales/${p.sale_id}`)}
             >
-              <td className="px-4 py-2.5 tabular-nums text-zinc-600 whitespace-nowrap text-[12px]">
+              <td className="px-4 py-2.5 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                 {formatDate(p.occurred_at)}
               </td>
               <td className="px-4 py-2.5">
                 <CustomerCell id={p.customer_id} name={p.customer_name} email={p.customer_email} />
               </td>
-              <td className="px-4 py-2.5 max-w-xs truncate text-zinc-700">
+              <td className="px-4 py-2.5 max-w-xs truncate text-ink-soft">
                 {p.offer_label_snapshot ?? "—"}
               </td>
               <td className="px-4 py-2.5">
                 <PaymentTypeBadge type={p.payment_type} />
               </td>
-              <td className="px-4 py-2.5 tabular-nums text-zinc-500 text-[12px]">
+              <td className="px-4 py-2.5 tabular-nums text-ink-soft text-[12px]">
                 {p.installment_n ?? "—"}
               </td>
-              <td className="px-4 py-2.5 text-zinc-600 text-[12px]">{p.provider}</td>
-              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-zinc-900 whitespace-nowrap">
+              <td className="px-4 py-2.5 text-ink-soft text-[12px]">{p.provider}</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-ink whitespace-nowrap">
                 {formatEurCents(p.amount_cents)}
               </td>
             </tr>
           ))}
         </tbody>
-        <tfoot className="border-t border-zinc-200 bg-zinc-50/50">
+        <tfoot className="border-t border-line bg-surface-2">
           <tr>
-            <td colSpan={6} className="px-4 py-2.5 text-[12px] text-zinc-500 text-right">
+            <td colSpan={6} className="px-4 py-2.5 text-[12px] text-ink-soft text-right">
               Total encaissé brut
             </td>
-            <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-zinc-900">
+            <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-ink">
               {formatEurCents(Math.round(totalEur * 100))}
             </td>
           </tr>
@@ -189,7 +189,7 @@ function FailedTable({ rows }: { rows: PaymentDetail[] }) {
     return <Empty message="Aucun échec de paiement ce mois 🎉" />;
   return (
     <>
-      <div className="px-4 py-2.5 bg-red-50/50 border-b border-zinc-100 text-[12px] text-zinc-600">
+      <div className="px-4 py-2.5 bg-crit-soft border-b border-line-soft text-[12px] text-ink-soft">
         Charges refusées ce mois — relançables depuis la fiche client. Le
         montant indiqué est <strong>tenté</strong>, pas encaissé.
       </div>
@@ -205,24 +205,24 @@ function FailedTable({ rows }: { rows: PaymentDetail[] }) {
               { label: "État", align: "right" },
             ]}
           />
-          <tbody className="divide-y divide-zinc-100">
+          <tbody className="divide-y divide-line-soft">
             {rows.map((p) => (
               <tr
                 key={p.payment_id}
-                className="hover:bg-zinc-50 cursor-pointer transition-colors"
+                className="hover:bg-surface-2 cursor-pointer transition-colors"
                 onClick={() => router.push(`/sales/${p.sale_id}`)}
               >
-                <td className="px-4 py-2.5 tabular-nums text-zinc-600 whitespace-nowrap text-[12px]">
+                <td className="px-4 py-2.5 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                   {formatDate(p.occurred_at)}
                 </td>
                 <td className="px-4 py-2.5">
                   <CustomerCell id={p.customer_id} name={p.customer_name} email={p.customer_email} />
                 </td>
-                <td className="px-4 py-2.5 max-w-xs truncate text-zinc-700">
+                <td className="px-4 py-2.5 max-w-xs truncate text-ink-soft">
                   {p.offer_label_snapshot ?? "—"}
                 </td>
-                <td className="px-4 py-2.5 text-zinc-600 text-[12px]">{p.provider}</td>
-                <td className="px-4 py-2.5 text-right tabular-nums text-zinc-400 line-through whitespace-nowrap">
+                <td className="px-4 py-2.5 text-ink-soft text-[12px]">{p.provider}</td>
+                <td className="px-4 py-2.5 text-right tabular-nums text-ink-faint line-through whitespace-nowrap">
                   {formatEurCents(p.amount_cents)}
                 </td>
                 <td className="px-4 py-2.5 text-right">
@@ -233,10 +233,10 @@ function FailedTable({ rows }: { rows: PaymentDetail[] }) {
           </tbody>
         </table>
       </div>
-      <div className="px-4 py-3 border-t border-zinc-100">
+      <div className="px-4 py-3 border-t border-line-soft">
         <Link
           href="/impayes"
-          className="inline-flex items-center gap-1 text-[12px] font-medium text-indigo-600 hover:text-indigo-700"
+          className="inline-flex items-center gap-1 text-[12px] font-medium text-gold-ink hover:text-gold-ink"
         >
           Voir tous les impayés
           <ArrowRight className="h-3 w-3" />
@@ -262,35 +262,35 @@ function RefundTable({ rows, totalEur }: { rows: PaymentDetail[]; totalEur: numb
             { label: "Montant remboursé", align: "right" },
           ]}
         />
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-line-soft">
           {rows.map((p) => (
             <tr
               key={p.payment_id}
-              className="hover:bg-zinc-50 cursor-pointer transition-colors"
+              className="hover:bg-surface-2 cursor-pointer transition-colors"
               onClick={() => router.push(`/sales/${p.sale_id}`)}
             >
-              <td className="px-4 py-2.5 tabular-nums text-zinc-600 whitespace-nowrap text-[12px]">
+              <td className="px-4 py-2.5 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                 {formatDate(p.occurred_at)}
               </td>
               <td className="px-4 py-2.5">
                 <CustomerCell id={p.customer_id} name={p.customer_name} email={p.customer_email} />
               </td>
-              <td className="px-4 py-2.5 max-w-xs truncate text-zinc-700">
+              <td className="px-4 py-2.5 max-w-xs truncate text-ink-soft">
                 {p.offer_label_snapshot ?? "—"}
               </td>
-              <td className="px-4 py-2.5 text-zinc-600 text-[12px]">{p.provider}</td>
-              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-violet-700 whitespace-nowrap">
+              <td className="px-4 py-2.5 text-ink-soft text-[12px]">{p.provider}</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-medium text-refund whitespace-nowrap">
                 −{formatEurCents(p.amount_cents)}
               </td>
             </tr>
           ))}
         </tbody>
-        <tfoot className="border-t border-zinc-200 bg-zinc-50/50">
+        <tfoot className="border-t border-line bg-surface-2">
           <tr>
-            <td colSpan={4} className="px-4 py-2.5 text-[12px] text-zinc-500 text-right">
+            <td colSpan={4} className="px-4 py-2.5 text-[12px] text-ink-soft text-right">
               Total remboursé
             </td>
-            <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-violet-700">
+            <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-refund">
               −{formatEurCents(Math.round(totalEur * 100))}
             </td>
           </tr>
@@ -313,7 +313,7 @@ function UpcomingTable({ rows }: { rows: ScheduleDetail[] }) {
     return <Empty message="Aucune échéance projetée ce mois." />;
   return (
     <>
-      <div className="px-4 py-2.5 bg-amber-50/50 border-b border-zinc-100 text-[12px] text-zinc-600">
+      <div className="px-4 py-2.5 bg-warn-soft border-b border-line-soft text-[12px] text-ink-soft">
         ⚡ Projection d'après l'échéancier multipay (couverture ~63%) — non
         encaissé, peut varier. Les abonnements ne sont pas inclus.
       </div>
@@ -330,17 +330,17 @@ function UpcomingTable({ rows }: { rows: ScheduleDetail[] }) {
               { label: "Statut", align: "right" },
             ]}
           />
-          <tbody className="divide-y divide-zinc-100">
+          <tbody className="divide-y divide-line-soft">
             {sorted.map((s, i) => {
               const overdueDays =
                 s.days_until_expected != null ? -s.days_until_expected : null;
               return (
                 <tr
                   key={`${s.sale_id}-${s.installment_n}-${i}`}
-                  className="hover:bg-zinc-50 cursor-pointer transition-colors"
+                  className="hover:bg-surface-2 cursor-pointer transition-colors"
                   onClick={() => router.push(`/sales/${s.sale_id}`)}
                 >
-                  <td className="px-4 py-2.5 tabular-nums text-zinc-600 whitespace-nowrap text-[12px]">
+                  <td className="px-4 py-2.5 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                     {formatDate(s.expected_at)}
                   </td>
                   <td className="px-4 py-2.5">
@@ -350,13 +350,13 @@ function UpcomingTable({ rows }: { rows: ScheduleDetail[] }) {
                       email={s.customer_email}
                     />
                   </td>
-                  <td className="px-4 py-2.5 max-w-xs truncate text-zinc-700">
+                  <td className="px-4 py-2.5 max-w-xs truncate text-ink-soft">
                     {s.offer_label_snapshot ?? "—"}
                   </td>
-                  <td className="px-4 py-2.5 tabular-nums text-zinc-500 text-[12px]">
+                  <td className="px-4 py-2.5 tabular-nums text-ink-soft text-[12px]">
                     {s.installment_n}/{s.planned_installments}
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-zinc-600 whitespace-nowrap">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-ink-soft whitespace-nowrap">
                     {formatEurCents(s.expected_amount_cents)}
                   </td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-[12px]">
@@ -364,16 +364,16 @@ function UpcomingTable({ rows }: { rows: ScheduleDetail[] }) {
                       <span
                         className={cn(
                           overdueDays > 60
-                            ? "text-red-600"
+                            ? "text-crit"
                             : overdueDays > 21
-                              ? "text-orange-600"
-                              : "text-amber-600",
+                              ? "text-warn"
+                              : "text-warn",
                         )}
                       >
                         +{overdueDays}j
                       </span>
                     ) : (
-                      <span className="text-zinc-400">—</span>
+                      <span className="text-ink-faint">—</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-right">

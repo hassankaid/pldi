@@ -50,7 +50,7 @@ export default async function CustomerDetailPage({
         ]}
         title={
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gold to-[#8f6f22] flex items-center justify-center text-[#1b1710] text-sm font-semibold shrink-0">
               {initial}
             </div>
             <span>{customer.name?.trim() || "Client sans nom"}</span>
@@ -59,37 +59,37 @@ export default async function CustomerDetailPage({
         subtitle={
           <div className="flex flex-wrap items-center gap-3 text-[12px] mt-2 ml-12">
             {customer.email && (
-              <span className="inline-flex items-center gap-1 text-zinc-600">
+              <span className="inline-flex items-center gap-1 text-ink-soft">
                 <Mail className="h-3 w-3" />
                 {customer.email}
               </span>
             )}
             {customer.phone_number && (
-              <span className="inline-flex items-center gap-1 text-zinc-600">
+              <span className="inline-flex items-center gap-1 text-ink-soft">
                 <Phone className="h-3 w-3" />
                 {customer.phone_number}
               </span>
             )}
             {customer.address_country && (
-              <span className="inline-flex items-center gap-1 text-zinc-600">
+              <span className="inline-flex items-center gap-1 text-ink-soft">
                 <MapPin className="h-3 w-3" />
                 {customer.address_country}
               </span>
             )}
-            <span className="font-mono text-[11px] text-zinc-400">
+            <span className="font-mono text-[11px] text-ink-faint">
               {customer.customer_id}
             </span>
           </div>
         }
         actions={
           <div className="text-right">
-            <div className="text-[11px] text-zinc-500 uppercase tracking-wider">
+            <div className="text-[11px] text-ink-faint uppercase tracking-wider">
               Total payé
             </div>
-            <div className="text-[24px] font-semibold tabular-nums tracking-tight text-zinc-900 leading-none mt-1">
+            <div className="text-[24px] font-semibold tabular-nums tracking-tight text-ink leading-none mt-1">
               {formatEur(Number(customer.total_paid_eur))}
             </div>
-            <div className="text-[11px] text-zinc-500 mt-1">
+            <div className="text-[11px] text-ink-soft mt-1">
               {customer.total_successful_charges} charges réussies
             </div>
           </div>
@@ -135,23 +135,23 @@ export default async function CustomerDetailPage({
       <PunctualityBanner data={punctuality} />
 
       {/* Sales history */}
-      <section className="rounded-xl border border-zinc-200 bg-white">
+      <section className="rounded-xl border border-line bg-surface">
         <div className="px-5 pt-5 pb-3">
-          <h2 className="text-[13px] font-semibold text-zinc-900">
+          <h2 className="text-[13px] font-semibold text-ink">
             Historique des ventes
-            <span className="text-zinc-400 font-normal ml-2">
+            <span className="text-ink-faint font-normal ml-2">
               ({sales.length})
             </span>
           </h2>
-          <p className="text-[12px] text-zinc-500 mt-0.5">
+          <p className="text-[12px] text-ink-soft mt-0.5">
             Premier achat {formatDateLong(customer.first_sale_at)} · dernier{" "}
             {formatDateLong(customer.last_sale_at)}
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
-            <thead className="border-y border-zinc-100">
-              <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+            <thead className="border-b border-gold-line">
+              <tr className="text-[11px] font-medium text-ink-faint uppercase tracking-wider">
                 <th className="px-5 py-2 text-left">Date</th>
                 <th className="px-3 py-2 text-left">Offre</th>
                 <th className="px-3 py-2 text-left">Type</th>
@@ -161,18 +161,18 @@ export default async function CustomerDetailPage({
                 <th className="px-5 py-2 text-left">Avancement</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-line-soft">
               {sales.map((s) => (
                 <tr
                   key={s.sale_id}
-                  className="hover:bg-zinc-50 cursor-pointer transition-colors"
+                  className="hover:bg-surface-2 cursor-pointer transition-colors"
                 >
-                  <td className="px-5 py-2 tabular-nums text-zinc-700 whitespace-nowrap text-[12px]">
+                  <td className="px-5 py-2 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                     <Link href={`/sales/${s.sale_id}`} className="block">
                       {formatDate(s.sold_at)}
                     </Link>
                   </td>
-                  <td className="px-3 py-2 max-w-md truncate text-zinc-900">
+                  <td className="px-3 py-2 max-w-md truncate text-ink">
                     <Link href={`/sales/${s.sale_id}`} className="block">
                       {s.offer_label_snapshot ??
                         s.offer_title_public_snapshot ??
@@ -185,16 +185,16 @@ export default async function CustomerDetailPage({
                   <td className="px-3 py-2">
                     <StateBadge state={s.state_business} />
                   </td>
-                  <td className="px-3 py-2 text-right tabular-nums text-zinc-700">
+                  <td className="px-3 py-2 text-right tabular-nums text-ink-soft">
                     {formatEurCents(s.amount_per_installment_cents)}
                   </td>
-                  <td className="px-3 py-2 text-right tabular-nums font-medium text-zinc-900 whitespace-nowrap">
+                  <td className="px-3 py-2 text-right tabular-nums font-medium text-ink whitespace-nowrap">
                     {formatEurCents(s.net_collected_cents)}
                   </td>
                   <td className="px-5 py-2 tabular-nums text-[12px]">
                     {s.payments_succeeded}
                     {s.payments_failed > 0 && (
-                      <span className="text-red-500 text-[11px] ml-0.5">
+                      <span className="text-crit text-[11px] ml-0.5">
                         /{s.payments_failed}❌
                       </span>
                     )}
@@ -224,25 +224,25 @@ function Stat({
   tone?: "good" | "warn" | "muted";
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-3">
-      <div className="text-[11px] text-zinc-500 uppercase tracking-wide truncate">
+    <div className="rounded-xl border border-line bg-surface p-3">
+      <div className="text-[11px] text-ink-faint uppercase tracking-wide truncate">
         {label}
       </div>
       <div
         className={
           tone === "good"
-            ? "text-[20px] font-semibold text-emerald-600 tabular-nums mt-1"
+            ? "text-[20px] font-semibold text-pos tabular-nums mt-1"
             : tone === "warn"
-              ? "text-[20px] font-semibold text-amber-600 tabular-nums mt-1"
+              ? "text-[20px] font-semibold text-warn tabular-nums mt-1"
               : tone === "muted"
-                ? "text-[20px] font-semibold text-zinc-400 tabular-nums mt-1"
-                : "text-[20px] font-semibold text-zinc-900 tabular-nums mt-1"
+                ? "text-[20px] font-semibold text-ink-faint tabular-nums mt-1"
+                : "text-[20px] font-semibold text-ink tabular-nums mt-1"
         }
       >
         {value}
       </div>
       {subtitle && (
-        <div className="text-[11px] text-zinc-500 mt-0.5 tabular-nums">
+        <div className="text-[11px] text-ink-soft mt-0.5 tabular-nums">
           {subtitle}
         </div>
       )}

@@ -50,13 +50,13 @@ export default async function SaleDetailPage({
           <span className="flex items-center gap-3 flex-wrap">
             <PaymentTypeBadge type={sale.payment_type} />
             <StateBadge state={sale.state_business} />
-            <span className="font-mono text-[11px] text-zinc-400">
+            <span className="font-mono text-[11px] text-ink-faint">
               {sale.sale_id}
             </span>
             <span>·</span>
             <Link
               href={`/customers/${sale.customer_id}`}
-              className="font-mono text-[11px] hover:text-zinc-900"
+              className="font-mono text-[11px] hover:text-gold-ink"
             >
               client {sale.customer_id}
             </Link>
@@ -64,14 +64,14 @@ export default async function SaleDetailPage({
         }
         actions={
           <div className="text-right">
-            <div className="text-[11px] text-zinc-500 uppercase tracking-wider">
+            <div className="text-[11px] text-ink-soft uppercase tracking-wider">
               Encaissé net
             </div>
-            <div className="text-[24px] font-semibold tabular-nums tracking-tight text-zinc-900 leading-none mt-1">
+            <div className="text-[24px] font-semibold tabular-nums tracking-tight text-ink leading-none mt-1">
               {formatEurCents(sale.net_collected_cents)}
             </div>
             {sale.refund_cents != null && sale.refund_cents > 0 && (
-              <div className="text-[11px] text-violet-600 mt-1">
+              <div className="text-[11px] text-refund mt-1">
                 dont {formatEurCents(sale.refund_cents)} refunds
               </div>
             )}
@@ -81,8 +81,8 @@ export default async function SaleDetailPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Sale info */}
-        <section className="rounded-xl border border-zinc-200 bg-white p-5">
-          <h2 className="text-[13px] font-semibold text-zinc-900 mb-4">
+        <section className="rounded-xl border border-line bg-surface p-5">
+          <h2 className="text-[13px] font-semibold text-ink mb-4">
             Détails
           </h2>
           <dl className="space-y-2.5 text-[13px]">
@@ -97,11 +97,11 @@ export default async function SaleDetailPage({
                 <span className="inline-flex items-center gap-1.5">
                   {formatEurCents(sale.amount_per_installment_cents)}
                   {sale.amount_source === "observed" ? (
-                    <span className="text-[10px] text-emerald-600 px-1.5 py-0.5 bg-emerald-50 rounded">
+                    <span className="text-[10px] text-pos px-1.5 py-0.5 bg-pos-soft rounded">
                       ✓ observé
                     </span>
                   ) : (
-                    <span className="text-[10px] text-amber-600 px-1.5 py-0.5 bg-amber-50 rounded">
+                    <span className="text-[10px] text-warn px-1.5 py-0.5 bg-warn-soft rounded">
                       ⚠ purchase
                     </span>
                   )}
@@ -113,7 +113,7 @@ export default async function SaleDetailPage({
                 <Row
                   label="Brut purchase"
                   value={
-                    <span className="text-amber-600">
+                    <span className="text-warn">
                       {formatEurCents(sale.amount_per_installment_cents_raw)}
                     </span>
                   }
@@ -125,7 +125,7 @@ export default async function SaleDetailPage({
             )}
           </dl>
 
-          <div className="mt-4 pt-4 border-t border-zinc-100 space-y-2.5 text-[13px]">
+          <div className="mt-4 pt-4 border-t border-line-soft space-y-2.5 text-[13px]">
             <Row
               label="Échéances Kajabi"
               value={sale.installments_made_kajabi}
@@ -135,7 +135,7 @@ export default async function SaleDetailPage({
               label="Charges échouées"
               value={
                 <span
-                  className={sale.payments_failed > 0 ? "text-red-600" : ""}
+                  className={sale.payments_failed > 0 ? "text-crit" : ""}
                 >
                   {sale.payments_failed}
                 </span>
@@ -145,11 +145,11 @@ export default async function SaleDetailPage({
           </div>
 
           {sale.deactivated_at && (
-            <div className="mt-4 pt-4 border-t border-zinc-100 space-y-2.5 text-[13px]">
+            <div className="mt-4 pt-4 border-t border-line-soft space-y-2.5 text-[13px]">
               <Row
                 label="Désactivé"
                 value={
-                  <span className="text-amber-600">
+                  <span className="text-warn">
                     {formatDateLong(sale.deactivated_at)}
                   </span>
                 }
@@ -160,28 +160,28 @@ export default async function SaleDetailPage({
         </section>
 
         {/* Payments history */}
-        <section className="lg:col-span-2 rounded-xl border border-zinc-200 bg-white">
+        <section className="lg:col-span-2 rounded-xl border border-line bg-surface">
           <div className="px-5 pt-5 pb-3">
-            <h2 className="text-[13px] font-semibold text-zinc-900">
+            <h2 className="text-[13px] font-semibold text-ink">
               Historique des paiements
-              <span className="text-zinc-400 font-normal ml-2">
+              <span className="text-ink-faint font-normal ml-2">
                 ({payments.length})
               </span>
             </h2>
-            <p className="text-[12px] text-zinc-500 mt-0.5">
+            <p className="text-[12px] text-ink-soft mt-0.5">
               Toutes les transactions Kajabi liées à cette vente
             </p>
           </div>
 
           {payments.length === 0 ? (
-            <p className="px-5 pb-5 text-[13px] text-zinc-400">
+            <p className="px-5 pb-5 text-[13px] text-ink-faint">
               Aucun paiement enregistré.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-[13px]">
-                <thead className="border-y border-zinc-100">
-                  <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+                <thead className="border-b border-gold-line">
+                  <tr className="text-[11px] font-medium text-ink-faint uppercase tracking-wider">
                     <th className="px-5 py-2 text-left w-8">#</th>
                     <th className="px-3 py-2 text-left">Date</th>
                     <th className="px-3 py-2 text-left">Action</th>
@@ -190,18 +190,18 @@ export default async function SaleDetailPage({
                     <th className="px-5 py-2 text-right">Montant</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-100">
+                <tbody className="divide-y divide-line-soft">
                   {payments.map((p) => (
-                    <tr key={p.payment_id}>
-                      <td className="px-5 py-2 tabular-nums text-zinc-400 text-[12px]">
+                    <tr key={p.payment_id} className="hover:bg-surface-2">
+                      <td className="px-5 py-2 tabular-nums text-ink-faint text-[12px]">
                         {p.installment_n ?? "—"}
                       </td>
-                      <td className="px-3 py-2 tabular-nums text-zinc-700 whitespace-nowrap text-[12px]">
+                      <td className="px-3 py-2 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                         {formatDate(p.occurred_at)}
                       </td>
-                      <td className="px-3 py-2 text-zinc-600 text-[12px]">
+                      <td className="px-3 py-2 text-ink-soft text-[12px]">
                         {p.action === "refund" ? (
-                          <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium bg-violet-50 text-violet-700">
+                          <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium bg-refund-soft text-refund">
                             Refund
                           </span>
                         ) : (
@@ -211,17 +211,17 @@ export default async function SaleDetailPage({
                       <td className="px-3 py-2">
                         <StateBadge state={p.state} />
                       </td>
-                      <td className="px-3 py-2 text-zinc-600 text-[12px]">
+                      <td className="px-3 py-2 text-ink-soft text-[12px]">
                         {p.provider}
                       </td>
                       <td className="px-5 py-2 text-right tabular-nums font-medium whitespace-nowrap">
                         <span
                           className={
                             p.is_refund
-                              ? "text-violet-700"
+                              ? "text-refund"
                               : p.is_failed
-                                ? "text-zinc-400 line-through"
-                                : "text-zinc-900"
+                                ? "text-ink-faint line-through"
+                                : "text-ink"
                           }
                         >
                           {p.is_refund ? "−" : ""}
@@ -239,22 +239,22 @@ export default async function SaleDetailPage({
 
       {/* Schedule */}
       {schedule.length > 0 && (
-        <section className="rounded-xl border border-zinc-200 bg-white">
+        <section className="rounded-xl border border-line bg-surface">
           <div className="px-5 pt-5 pb-3 flex items-center justify-between">
             <div>
-              <h2 className="text-[13px] font-semibold text-zinc-900">
+              <h2 className="text-[13px] font-semibold text-ink">
                 Échéancier projeté
-                <span className="text-zinc-400 font-normal ml-2">
+                <span className="text-ink-faint font-normal ml-2">
                   ({schedule.length})
                 </span>
               </h2>
-              <p className="text-[12px] text-zinc-500 mt-0.5">
+              <p className="text-[12px] text-ink-soft mt-0.5">
                 Projection mensuelle vs paiements réels matchés
               </p>
             </div>
-            <span className="text-[11px] text-zinc-500">
+            <span className="text-[11px] text-ink-soft">
               Source :{" "}
-              <span className="font-medium text-zinc-700">
+              <span className="font-medium text-ink">
                 {schedule[0].planned_source === "title"
                   ? "internal_title"
                   : schedule[0].planned_source === "ratio"
@@ -266,8 +266,8 @@ export default async function SaleDetailPage({
 
           <div className="overflow-x-auto">
             <table className="w-full text-[13px]">
-              <thead className="border-y border-zinc-100">
-                <tr className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+              <thead className="border-b border-gold-line">
+                <tr className="text-[11px] font-medium text-ink-faint uppercase tracking-wider">
                   <th className="px-5 py-2 text-left w-8">#</th>
                   <th className="px-3 py-2 text-left">Date prévue</th>
                   <th className="px-3 py-2 text-right">Prévu</th>
@@ -276,19 +276,19 @@ export default async function SaleDetailPage({
                   <th className="px-5 py-2 text-left">Statut</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-line-soft">
                 {schedule.map((s) => (
-                  <tr key={s.installment_n}>
-                    <td className="px-5 py-2 tabular-nums text-zinc-400 text-[12px]">
+                  <tr key={s.installment_n} className="hover:bg-surface-2">
+                    <td className="px-5 py-2 tabular-nums text-ink-faint text-[12px]">
                       {s.installment_n}
                     </td>
-                    <td className="px-3 py-2 tabular-nums text-zinc-700 whitespace-nowrap text-[12px]">
+                    <td className="px-3 py-2 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                       {formatDate(s.expected_at)}
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums text-zinc-700">
+                    <td className="px-3 py-2 text-right tabular-nums text-ink-soft">
                       {formatEurCents(s.expected_amount_cents)}
                     </td>
-                    <td className="px-3 py-2 tabular-nums text-zinc-600 whitespace-nowrap text-[12px]">
+                    <td className="px-3 py-2 tabular-nums text-ink-soft whitespace-nowrap text-[12px]">
                       {s.paid_at ? formatDate(s.paid_at) : "—"}
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums text-[12px]">
@@ -296,10 +296,10 @@ export default async function SaleDetailPage({
                         <span
                           className={
                             s.days_late_paid > 7
-                              ? "text-amber-600"
+                              ? "text-warn"
                               : s.days_late_paid < 0
-                                ? "text-emerald-600"
-                                : "text-zinc-500"
+                                ? "text-pos"
+                                : "text-ink-soft"
                           }
                         >
                           {s.days_late_paid > 0 ? "+" : ""}
@@ -332,8 +332,8 @@ function Row({
 }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <dt className="text-[12px] text-zinc-500">{label}</dt>
-      <dd className="text-[13px] text-zinc-900 text-right">{value}</dd>
+      <dt className="text-[12px] text-ink-soft">{label}</dt>
+      <dd className="text-[13px] text-ink text-right">{value}</dd>
     </div>
   );
 }
