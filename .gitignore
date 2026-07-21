@@ -39,6 +39,12 @@ desktop.ini
 /dumps/
 /.cache/
 
+# === Scraper (Playwright) — jamais de session/cookies/PII commités ===
+scraper/.auth/
+scraper/user-data/
+scraper/*.local.json
+scraper/out/
+
 # === Supabase local ===
 .supabase/
 **/.branches
