@@ -153,6 +153,12 @@ def upsert_transactions(root, key, objs):
     return _http("POST", f"{root}/rest/v1/rpc/upsert_kajabi_transactions", key, body={"data": objs})
 
 
+def heal_scraped_links(root, key):
+    """Renseigne purchase_id (= charge_id scrapé) et reconstruit les achats manquants,
+    pour que app.sales / le lien Ventes restent propres. Idempotent."""
+    return _http("POST", f"{root}/rest/v1/rpc/heal_scraped_links", key, body={})
+
+
 # ---------------------------------------------------------------------------
 # Parsing d'une ligne
 # ---------------------------------------------------------------------------
@@ -420,6 +426,10 @@ def run(args):
         total_up += int(n or 0)
         print(f"  upsert lot {i // args.chunk + 1} : {n} lignes (cumul {total_up})")
     print(f"\nOK. {total_up} transaction(s) inseree(s) dans raw.kajabi_transactions.")
+
+    # Repare le lien Ventes : purchase_id + reconstruction des achats manquants.
+    heal = heal_scraped_links(root, key)
+    print(f"Heal lien Ventes : {heal}")
     print("Tes vues app.* et le dashboard sont a jour automatiquement.")
 
 
